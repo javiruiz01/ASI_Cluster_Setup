@@ -1,5 +1,10 @@
 #! /bin/bash
 
+function error_message {
+  echo "$1" 1>&2
+  exit 2
+}
+
 function check_ip {
   if [ $# -eq 0 ]
   then
@@ -8,24 +13,21 @@ function check_ip {
   # Bloques de uno a 3 numeros, del 1 al 9, separados por puntos
   if [[ $IP =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]
   then
-    echo "valid IP, you can continue"
+    echo "valid IP: $IP"
   else
-    echo "not a valid IP address in line $counterLine"
-    exit 2
+    error_message "not a valid IP address in line $counterLine"
   fi
 }
 
 function main {
   if [ $# -eq 0 ]
   then
-    echo "USAGE: `basename $0` fichero_configuracion"
-    exit 2
+    error_message "USAGE: `basename $0` fichero_configuracion"
   fi
   CONF=$1
   if [[ ! -f $CONF ]]
   then
-    echo "ERROR: looks like the file doesn't exist"
-    exit 2
+    error_message "ERROR: looks like the file doesn't exist"
   fi
   counterLine=0
   while read -r line
@@ -33,26 +35,28 @@ function main {
     counterLine=$((counterLine+1))
     # Ignoramos lineas que empiecen con #
     [[ "$line" == "#"* || -z "$line" ]] && continue
-    echo "$line"
+    echo "We are going to be using this line: $line"
     # Ahora comprobamos si cumple el formato
     # Separamos la linea en argumentos
     set -- $line
     # Guardamos las variables
     IP=$1
     NAME=$2
-    SERVICE=$3
+    SERVICE=$3 
     # Comprobamos numero de palabras
     if [[ $# -ne 3 ]]
     then
-      echo "Format not accepted in line $counterLine"
+      error_message "Format not accepted in line $counterLine"
     fi
     # Realizamos comprobaciones sobre las palabras
     check_ip "$IP"
     if [[ "$SERVICE" != *".conf" ]]
     then
-      echo "Format not accepted in line $counterLine"
-      exit 2
+      error_message "Format not accepted in line $counterLine"
+    else 
+      echo "Valid service: $SERVICE"
     fi
+    
   done < "$CONF"
 }
 
