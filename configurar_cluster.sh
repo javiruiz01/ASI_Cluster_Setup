@@ -21,9 +21,15 @@ function check_ip {
   then
     echo "I need the ip address to test"
   fi
+<<<<<<< HEAD
 
  # Bloques de uno a 3 numeros, del 1 al 9, separados por puntos
   if [[ $ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]
+=======
+ 
+ # Bloques de uno a 3 numeros, del 1 al 9, separados por puntos
+  if [[ $IP =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]
+>>>>>>> aeb1a90d63834a26131f6dc0c61ea3c93bcfc321
   then
     OIFS=$IFS
     IFS="."
@@ -42,14 +48,22 @@ function main {
   if [ $# -eq 0 ]
   then
     error_message "USAGE: `basename $0` fichero_configuracion"
+<<<<<<< HEAD
 
+=======
+ 
+>>>>>>> aeb1a90d63834a26131f6dc0c61ea3c93bcfc321
   fi
+  
   CONF=$1
+  
   if [[ ! -f $CONF ]]
   then
     error_message "ERROR: looks like the file doesn't exist"
   fi
+  
   counterLine=0
+<<<<<<< HEAD
   validLines=0
   while read -r line
   do
@@ -69,12 +83,36 @@ function main {
     name=$2
     service=$3
 
+=======
+  
+  while read -r line
+  do
+    counterLine=$((counterLine+1))
+    
+    # Ignoramos lineas que empiecen con #
+    [[ "$line" == "#"* || -z "$line" ]] && continue
+    echo "We are going to be using this line: $line"
+    
+    # Ahora comprobamos si cumple el formato
+    # Separamos la linea en argumentos
+    set -- $line
+    
+    # Guardamos las variables
+    IP=$1
+    NAME=$2
+    SERVICE=$3 
+    
+>>>>>>> aeb1a90d63834a26131f6dc0c61ea3c93bcfc321
     # Comprobamos numero de palabras
     if [[ $# -ne 3 ]]
     then
       error_message "Format not accepted in line $counterLine"
     fi
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> aeb1a90d63834a26131f6dc0c61ea3c93bcfc321
     # Realizamos comprobaciones sobre las palabras
     check_ip "$ip"
     if [[ "$service" != *".conf" ]]
