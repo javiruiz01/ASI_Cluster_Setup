@@ -10,7 +10,7 @@ function main {
   then 
     rm data.tar
   fi
-  tar -cf data.tar mount_raid.conf configurar_cluster.sh
+  tar -cf data.tar conf_files/mount_raid.conf configurar_cluster.sh
   scp data.tar practicas@$1:~/
 }
 

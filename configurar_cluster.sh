@@ -1,7 +1,24 @@
 #! /bin/bash
 
-function my_print {
-  echo "MY PRINT"
+# This function will replace error_message
+function print {
+  red="\e[31m"
+  green="\e[32m"
+  end="\e[0m"
+  
+  type=$1
+  message=$2
+
+  if [[ $type == "info" ]]
+  then
+    echo -e "${green}INFO:${end} $message" 1>&2
+  elif [[ $type == "usage" ]]
+  then 
+    echo -e "${green}USAGE:${end} $message"
+  else 
+    echo -e "${red}ERROR${end} in line $counterLine:  $message" 1>&2
+    exit 2
+  fi
 }
 
 function check_execute {
@@ -11,15 +28,10 @@ function check_execute {
   fi
 }
 
-function error_message {
-  echo "$1" 1>&2
-  exit 2
-}
-
 function check_ip {
   if [ $# -eq 0 ]
   then
-    echo "I need the ip address to test"
+    print "error" "I need the ip address to test"
   fi
 
  # Bloques de uno a 3 numeros, del 1 al 9, separados por puntos
@@ -30,24 +42,32 @@ function check_ip {
     set -- $ip
     if [[ $1 -le 255 && $2 -le 255 && $3 -le 255 && $4 -le 255 ]] 
     then
-      echo "valid ip: $ip"
+      print "info" "Valid ip: $ip"
     fi
     IFS=$OIFS
   else
-    error_message "not a valid ip address in line $counterLine"
+    print "error" "Not a valid ip address in line $counterLine"
   fi
 }
 
 function main {
   if [ $# -eq 0 ]
   then
-    error_message "USAGE: `basename $0` fichero_configuracion"
-
+    print "usage" "`basename $0` fichero_configuracion"
+    exit 2
   fi
   CONF=$1
   if [[ ! -f $CONF ]]
   then
-    error_message "ERROR: looks like the file doesn't exist"
+    print "error" "Looks like the file '$CONF' doesn't exist"
+  fi
+  if [[ ! -s $CONF ]]
+  then
+    print "error" "Looks like the file '$CONF' is empty"
+  fi
+  if [[ ! -r $CONF ]]
+  then
+    print "error" "Looks like I can't read the '$CONF' file"
   fi
   counterLine=0
   validLines=0
@@ -57,7 +77,7 @@ function main {
 
     # Ignoramos lineas que empiecen con #
     [[ "$line" == "#"* || -z "$line" ]] && continue
-    echo "We are going to be using this line: $line"
+    print "info" "We are going to be using this line: $line"
     validLines=$((validLines+1))
 
     # Ahora comprobamos si cumple el formato
@@ -72,33 +92,40 @@ function main {
     # Comprobamos numero de palabras
     if [[ $# -ne 3 ]]
     then
-      error_message "Format not accepted in line $counterLine"
+      print "error" "Format not accepted in line $counterLine"
     fi
-
-    # Realizamos comprobaciones sobre las palabras
+    
+    # Realizamos comprobacion sobre la ip
     check_ip "$ip"
+
+    # Realizamos comprobacion sobre el servico    
+    # name=$name.sh
+    if [[ ! -r scripts_services/$name.sh ]]
+    then
+      print "error" "Service $name does not seem to exist"
+    fi
     if [[ "$service" != *".conf" ]]
     then
-      error_message "Format not accepted in line $counterLine"
+      print "error" "Format not accepted in line $counterLine"
     else
-      echo "Valid service: $service"
+      print "info" "Valid service: $service"
     fi
-    check_execute "$name.sh"
+    check_execute "scripts_services/$name.sh"
     case $name in 
       mount)
-        ./mount.sh "$ip"
+        scripts_services/mount.sh "$ip"
         ;;
       raid)
-        ./raid.sh
+        scripts_services/raid.sh
         ;;
       nfs_server)
-        ./nfs_server.sh
+        scripts_services/nfs_server.sh
         ;;
       nfs_client)
-        ./nfs_client
+        scripts_services/nfs_client.sh
         ;;
       \?)
-        error_message "It seems this is not a valid configuration: $name"
+        print "error" "It seems this is not a valid configuration: $name"
         ;;
     esac
   done < "$CONF"
