@@ -1,0 +1,13 @@
+# Codigos de errores utilizados en configurar_cluster.sh
+
+02 --> HELP
+03 --> Fallo en el checkeo de la ip
+04 --> El fichero de configuracion no existe
+05 --> El fichero de configuracion esta vacio
+06 --> El fichero de configuracion no se puede leer
+07 --> Formato no aceptado en una linea en el fichero de configuracion
+      ($name)
+08 --> Nombre del servicio no existe
+09 --> Formato no aceptado en una linea del fichero de configuracion
+      ($service)
+10 --> No es una configuracion valida

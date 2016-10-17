@@ -1,24 +1,40 @@
 #! /bin/bash
 
-# This function will replace error_message
+# Funcione que imprime cosas
 function print {
   red="\e[31m"
   green="\e[32m"
   end="\e[0m"
-  
+
   type=$1
   message=$2
 
   if [[ $type == "info" ]]
   then
-    echo -e "${green}INFO:${end} $message" 1>&2
+    echo -e "[${green}INFO${end}] $message" 1>&2
   elif [[ $type == "usage" ]]
-  then 
-    echo -e "${green}USAGE:${end} $message"
-  else 
-    echo -e "${red}ERROR${end} in line $counterLine:  $message" 1>&2
-    exit 2
+  then
+    echo -e "[${green}USAGE${end}] $message" 1>&2
+  else
+    echo -e "[${red}ERROR${end}] in line $counterLine:  $3" 1>&2
+    exit $2
   fi
+}
+
+function setUp {
+  print "info" "I'm in the mount function"
+  if [[ -z data.tar ]]
+  then
+    rm data.tar
+  fi
+  cd remote_conf
+  print "info" "Let's compress this"
+  tar -cf data.tar $2.sh $3
+  echo `pwd`
+  scp data.tar root@$1:~/
+  print "info" "Connecting via SSH"
+  ssh root@$1 'cd /home/practicas; tar -xvf data.tar && rm data.tar'
+  ssh root@$1 'cd /home/practicas; ./'"$2.sh"''
 }
 
 function check_execute {
@@ -29,29 +45,24 @@ function check_execute {
 }
 
 function check_ip {
-  if [ $# -eq 0 ]
-  then
-    print "error" "I need the ip address to test"
-  fi
-
  # Bloques de uno a 3 numeros, del 1 al 9, separados por puntos
   if [[ $ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]
   then
     OIFS=$IFS
     IFS="."
     set -- $ip
-    if [[ $1 -le 255 && $2 -le 255 && $3 -le 255 && $4 -le 255 ]] 
+    if [[ $1 -le 255 && $2 -le 255 && $3 -le 255 && $4 -le 255 ]]
     then
       print "info" "Valid ip: $ip"
     fi
     IFS=$OIFS
   else
-    print "error" "Not a valid ip address in line $counterLine"
+    print "error" "3" "Not a valid ip address in line $counterLine"
   fi
 }
 
 function main {
-  if [ $# -eq 0 ]
+  if [[ $# -eq 0 ]]
   then
     print "usage" "`basename $0` fichero_configuracion"
     exit 2
@@ -59,15 +70,16 @@ function main {
   CONF=$1
   if [[ ! -f $CONF ]]
   then
-    print "error" "Looks like the file '$CONF' doesn't exist"
+    print "error" "4" "Looks like the file '$CONF' doesn't exist"
   fi
   if [[ ! -s $CONF ]]
   then
-    print "error" "Looks like the file '$CONF' is empty"
+    counterLine=1
+    print "error" "5" "Looks like the file '$CONF' is empty"
   fi
   if [[ ! -r $CONF ]]
   then
-    print "error" "Looks like I can't read the '$CONF' file"
+    print "error" "6" "Looks like I can't read the '$CONF' file"
   fi
   counterLine=0
   validLines=0
@@ -92,31 +104,31 @@ function main {
     # Comprobamos numero de palabras
     if [[ $# -ne 3 ]]
     then
-      print "error" "Format not accepted in line $counterLine"
+      print "error" "7" "Format not accepted in line $counterLine"
     fi
-    
+
     # Realizamos comprobacion sobre la ip
     check_ip "$ip"
 
-    # Realizamos comprobacion sobre el servico    
+    # Realizamos comprobacion sobre el servico
     # name=$name.sh
     if [[ ! -r scripts_services/$name.sh ]]
     then
-      print "error" "Service $name does not seem to exist"
+      print "error" "8" "Service $name does not seem to exist"
     fi
     if [[ "$service" != *".conf" ]]
     then
-      print "error" "Format not accepted in line $counterLine"
+      print "error" "9" "Format not accepted in line $counterLine"
     else
       print "info" "Valid service: $service"
     fi
     check_execute "scripts_services/$name.sh"
-    case $name in 
+    case $name in
       mount)
-        scripts_services/mount.sh "$ip"
+        setUp "$ip" "$name" "$service"
         ;;
       raid)
-        scripts_services/raid.sh
+        setUp "$ip" "$name" "$service"
         ;;
       nfs_server)
         scripts_services/nfs_server.sh
@@ -125,7 +137,7 @@ function main {
         scripts_services/nfs_client.sh
         ;;
       \?)
-        print "error" "It seems this is not a valid configuration: $name"
+        print "error" "10" "It seems this is not a valid configuration: $name"
         ;;
     esac
   done < "$CONF"

@@ -1,0 +1,5 @@
+# Este es un archivo erroneo
+142.168.1.6 mounty mount.conf
+
+# Ahora deberia salir error en la linea 5
+24143252352
