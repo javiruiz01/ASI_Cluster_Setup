@@ -1,5 +1,5 @@
 # Maquina servidora
-# 192.168.0.1 raid raid.conf
+# 192.168.56.102 raid raid.conf
 192.168.56.102 mount mount_raid.conf
 # 192.168.0.1 nfs_server nfs_server.conf
 

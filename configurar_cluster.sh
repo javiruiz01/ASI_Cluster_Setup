@@ -1,11 +1,11 @@
 #! /bin/bash
 
-# Funcione que imprime cosas
+# Funcione que imprime cosas 
 function print {
   red="\e[31m"
   green="\e[32m"
   end="\e[0m"
-
+  
   type=$1
   message=$2
 
@@ -13,9 +13,9 @@ function print {
   then
     echo -e "[${green}INFO${end}] $message" 1>&2
   elif [[ $type == "usage" ]]
-  then
+  then 
     echo -e "[${green}USAGE${end}] $message" 1>&2
-  else
+  else 
     echo -e "[${red}ERROR${end}] in line $counterLine:  $3" 1>&2
     exit $2
   fi
@@ -31,10 +31,9 @@ function setUp {
   print "info" "Let's compress this"
   tar -cf data.tar $2.sh $3
   echo `pwd`
-  scp data.tar root@$1:~/
+  scp data.tar roo@$1:/home/practicas
   print "info" "Connecting via SSH"
-  ssh root@$1 'cd /home/practicas; tar -xvf data.tar && rm data.tar'
-  ssh root@$1 'cd /home/practicas; ./'"$2.sh"''
+  ssh root@$1 'cd /home/practicas; tar -xvf data.tar && rm data.tar; ./'"$2"'.sh'
 }
 
 function check_execute {
@@ -51,7 +50,7 @@ function check_ip {
     OIFS=$IFS
     IFS="."
     set -- $ip
-    if [[ $1 -le 255 && $2 -le 255 && $3 -le 255 && $4 -le 255 ]]
+    if [[ $1 -le 255 && $2 -le 255 && $3 -le 255 && $4 -le 255 ]] 
     then
       print "info" "Valid ip: $ip"
     fi
@@ -106,11 +105,11 @@ function main {
     then
       print "error" "7" "Format not accepted in line $counterLine"
     fi
-
+    
     # Realizamos comprobacion sobre la ip
     check_ip "$ip"
 
-    # Realizamos comprobacion sobre el servico
+    # Realizamos comprobacion sobre el servico    
     # name=$name.sh
     if [[ ! -r scripts_services/$name.sh ]]
     then
@@ -123,7 +122,7 @@ function main {
       print "info" "Valid service: $service"
     fi
     check_execute "scripts_services/$name.sh"
-    case $name in
+    case $name in 
       mount)
         setUp "$ip" "$name" "$service"
         ;;
@@ -131,10 +130,10 @@ function main {
         setUp "$ip" "$name" "$service"
         ;;
       nfs_server)
-        scripts_services/nfs_server.sh
+        setUp "$ip" "$name" "$service"
         ;;
       nfs_client)
-        scripts_services/nfs_client.sh
+        setUp "$ip" "$name" "$service"
         ;;
       \?)
         print "error" "10" "It seems this is not a valid configuration: $name"
