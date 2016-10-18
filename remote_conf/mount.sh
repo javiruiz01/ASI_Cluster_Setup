@@ -5,17 +5,17 @@ while read -r line
 do
   counterLine=$((counterLine+1))
   if [[ $counterLine -ge 3 ]] 
-  then
-    echo -e "[\e[31mERROR\e[0m] The conf file seems to have some errors"
+  then 
+    exit 11
   fi
 
   if [[ $counterLine -eq 1 ]]
   then
-    echo -e "[\e[32mINFO\e[0m] This is name of the device: $name"
     name=$line
+    echo -e "[\e[32mINFO\e[0m] This is name of the device: $name"
   else
-    echo -e "[\e[32mINFO\e[0m] This is the mounting point: $mountpoint"
     mountpoint=$line
+    echo -e "[\e[32mINFO\e[0m] This is the mounting point: $mountpoint"
   fi
 done < "mount_raid.conf"
 
@@ -26,19 +26,26 @@ then
 else
   if [[ "$(ls -A $mountpoint)" ]]
   then
-    echo -e "[\e[31mERROR\e[0m] Directory does not seems to be empty"
-    exit 2
+    exit 12
   else
     echo -e "[\e[32mINFO\e[0m] Directory is empty, continuing"
   fi
 fi
 
-mount -t ext4 $name $mountpoint
+blkid | grep $name
+if [[ $? -eq 1 ]]
+then
+  exit 13
+else
+  echo -e "[\e[32mINFO\e[0m] Device exists, continuing"
+fi
+
+# mount -t ext4 $name $mountpoint
 
 # Ahora nos aseguramos que se monte siempre el dispositivo
-if [[ -n "`grep $name /etc/fstab`" ]]
-then 
-  echo -e "[\e[32mINFO\e[0m] I'm already in the /etc/fstab file"
-else
-  echo "$name $mountpoint ext4 default 0 0" >> /etc/fstab
-fi
+# if [[ -n "`grep $name /etc/fstab`" ]]
+# then 
+#   echo -e "[\e[32mINFO\e[0m] I'm already in the /etc/fstab file"
+# else
+#   echo "$name $mountpoint ext4 default 0 0" >> /etc/fstab
+# fi

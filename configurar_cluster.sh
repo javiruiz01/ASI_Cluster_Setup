@@ -31,9 +31,25 @@ function setUp {
   print "info" "Let's compress this"
   tar -cf data.tar $2.sh $3
   echo `pwd`
-  scp data.tar roo@$1:/home/practicas
+  scp data.tar root@$1:~/
   print "info" "Connecting via SSH"
-  ssh root@$1 'cd /home/practicas; tar -xvf data.tar && rm data.tar; ./'"$2"'.sh'
+  ssh root@$1 'tar -xvf data.tar && rm data.tar; ./'"$2"'.sh'
+  # Ahora cogemos los codigos de errores
+  code=$?
+  case $code in
+    11)
+      counterLine=9
+      print "error" "11" "From the remote machine, the conf file '$3' seems to have some errors"
+      ;;
+    12)
+      counterLine=29
+      print "error" "12" "From the remote machine, mounting point does not seem to be empty"
+      ;; 
+    13)
+      counterLine=37
+      print "error" "13" "From remote machine, device does not seems to exist"
+      ;;
+  esac
 }
 
 function check_execute {
@@ -56,7 +72,7 @@ function check_ip {
     fi
     IFS=$OIFS
   else
-    print "error" "3" "Not a valid ip address in line $counterLine"
+    print "error" "3" "Not a valid ip address"
   fi
 }
 
