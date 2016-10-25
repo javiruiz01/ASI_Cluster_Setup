@@ -29,25 +29,51 @@ function setUp {
   fi
   cd remote_conf
   print "info" "Let's compress this"
-  tar -cf data.tar $2.sh $3
-  echo `pwd`
-  scp data.tar root@$1:~/
+  tar -cf data.tar $2.sh $3 > /dev/null
+  scp data.tar root@$1:~/ > /dev/null
   print "info" "Connecting via SSH"
-  ssh root@$1 'tar -xvf data.tar && rm data.tar; ./'"$2"'.sh'
+  ssh -n root@$1 'tar -xvf data.tar && rm data.tar; ./'"$2"'.sh'
   # Ahora cogemos los codigos de errores
   code=$?
   case $code in
     11)
       counterLine=9
-      print "error" "11" "From the remote machine, the conf file '$3' seems to have some errors"
+      print "error" "$code" "From the remote machine, the conf file '$3' seems to have some errors"
       ;;
     12)
       counterLine=29
-      print "error" "12" "From the remote machine, mounting point does not seem to be empty"
+      print "error" "$code" "From the remote machine, mounting point does not seem to be empty"
       ;; 
     13)
       counterLine=37
-      print "error" "13" "From remote machine, device does not seems to exist"
+      print "error" "$code" "From remote machine, device does not seems to exist"
+      ;;
+    14)
+      counterLine=10
+      print "error" "$code" "From remote machine, the conf file '$3' seems to have some errors"
+      ;;
+    15)
+      counterLine=48
+      print "error" "$code" "From remote machine, could not install 'mdadm' command"
+      ;;
+    16)
+      counterLine=31
+      print "error" "$code" "From remote machine, device doesn't seem to exist"
+      ;;
+    17)
+      counterLine=33
+      print "error" "$code" "From remote machine, device is not a block device"
+      ;;
+    18)
+      print "error" "$code" "From remote machine, command 'mdadm' has gone wrong"      
+      ;;
+    19)
+      counterLine=19
+      print "error" "$code" "From remote machine, level does not seem to be right"
+      ;;
+    64)
+      print "info" "Next step"
+      cd /home/practicas/cluster_configuration/
       ;;
   esac
 }
@@ -101,10 +127,10 @@ function main {
   while read -r line
   do
     counterLine=$((counterLine+1))
-
     # Ignoramos lineas que empiecen con #
     [[ "$line" == "#"* || -z "$line" ]] && continue
-    print "info" "We are going to be using this line: $line"
+    print "info" "Beginning new line of 'fichero_configuracion': \n\t $line"
+    #print "info" "We are going to be using this line: $line"
     validLines=$((validLines+1))
 
     # Ahora comprobamos si cumple el formato
@@ -127,7 +153,7 @@ function main {
 
     # Realizamos comprobacion sobre el servico    
     # name=$name.sh
-    if [[ ! -r scripts_services/$name.sh ]]
+    if [[ ! -r remote_conf/$name.sh ]]
     then
       print "error" "8" "Service $name does not seem to exist"
     fi
@@ -137,25 +163,9 @@ function main {
     else
       print "info" "Valid service: $service"
     fi
-    check_execute "scripts_services/$name.sh"
-    case $name in 
-      mount)
-        setUp "$ip" "$name" "$service"
-        ;;
-      raid)
-        setUp "$ip" "$name" "$service"
-        ;;
-      nfs_server)
-        setUp "$ip" "$name" "$service"
-        ;;
-      nfs_client)
-        setUp "$ip" "$name" "$service"
-        ;;
-      \?)
-        print "error" "10" "It seems this is not a valid configuration: $name"
-        ;;
-    esac
-  done < "$CONF"
+    check_execute "remote_conf/$name.sh"
+    setUp "$ip" "$name" "$service" 
+  done < $CONF
 }
 
 main "$@"

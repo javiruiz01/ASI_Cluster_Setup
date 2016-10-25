@@ -12,23 +12,23 @@ do
   if [[ $counterLine -eq 1 ]]
   then
     name=$line
-    echo -e "[\e[32mINFO\e[0m] This is name of the device: $name"
+    echo -e "[\e[32mINFO\e[0m] This is name of the device: $name" 1>&2
   else
     mountpoint=$line
-    echo -e "[\e[32mINFO\e[0m] This is the mounting point: $mountpoint"
+    echo -e "[\e[32mINFO\e[0m] This is the mounting point: $mountpoint" 1>&2
   fi
 done < "mount_raid.conf"
 
 if [[ ! -d $mountpoint ]]
 then 
-  echo -e "[\e[32mINFO\e[0m] Creating directory"
+  echo -e "[\e[32mINFO\e[0m] Creating directory" 1>&2
   mkdir $mountpoint
 else
   if [[ "$(ls -A $mountpoint)" ]]
   then
     exit 12
   else
-    echo -e "[\e[32mINFO\e[0m] Directory is empty, continuing"
+    echo -e "[\e[32mINFO\e[0m] Directory is empty, continuing" 1>&2
   fi
 fi
 
@@ -37,7 +37,7 @@ if [[ $? -eq 1 ]]
 then
   exit 13
 else
-  echo -e "[\e[32mINFO\e[0m] Device exists, continuing"
+  echo -e "[\e[32mINFO\e[0m] Device exists, continuing" 1>&2
 fi
 
 # mount -t ext4 $name $mountpoint
@@ -49,3 +49,4 @@ fi
 # else
 #   echo "$name $mountpoint ext4 default 0 0" >> /etc/fstab
 # fi
+exit 64

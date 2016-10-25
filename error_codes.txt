@@ -11,3 +11,6 @@
 09 --> Formato no aceptado en una linea del fichero de configuracion
       ($service)
 10 --> No es una configuracion valida
+11 --> En mount.conf, fichero tiene demasiadas lineas
+12 --> En servicio mount, directorio de montaje no esta vacio
+13 --> En servicio mount, el dispositivo a montar no existe
