@@ -14,3 +14,11 @@
 11 --> En mount.conf, fichero tiene demasiadas lineas
 12 --> En servicio mount, directorio de montaje no esta vacio
 13 --> En servicio mount, el dispositivo a montar no existe
+14 --> En servicio raid, fichero tiene demasiadas lineas
+15 --> En servicio raid, el comando mdadm no ha sido instalado correctamente
+16 --> En servicio raid, el dispositivo no existe
+17 --> En servicio raid, el dispositivo no es un dispositivo de bloques
+18 --> En servicio raid, el comando mdadm no se ha ejecutado correctamente
+19 --> En servicio raid, el nivel de raid no es correcto
+20 --> En servicio raid, instalacion ha fallado
+21 --> En servicio raid, la unidad de uno de los tamanos es incorrecto (No es G, M, o K)

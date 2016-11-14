@@ -36,6 +36,10 @@ function setUp {
   # Ahora cogemos los codigos de errores
   code=$?
   case $code in
+    0)
+       print "info" "Next step"
+       cd /home/practicas/cluster_configuration/
+       ;;
     11)
       counterLine=9
       print "error" "$code" "From the remote machine, the conf file '$3' seems to have some errors"
@@ -65,15 +69,16 @@ function setUp {
       print "error" "$code" "From remote machine, device is not a block device"
       ;;
     18)
+      counterLine=69
       print "error" "$code" "From remote machine, command 'mdadm' has gone wrong"      
       ;;
     19)
       counterLine=19
-      print "error" "$code" "From remote machine, level does not seem to be right"
+      print "error" "$code" "From remote machine, invalid RAID level"
       ;;
-    64)
-      print "info" "Next step"
-      cd /home/practicas/cluster_configuration/
+    22)
+      counterLine=25
+      print "error" "$code" "From remote machine, total size seems to be too big for the machine"
       ;;
   esac
 }
