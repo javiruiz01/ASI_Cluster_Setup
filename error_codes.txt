@@ -22,3 +22,5 @@
 19 --> En servicio raid, el nivel de raid no es correcto
 20 --> En servicio raid, instalacion ha fallado
 21 --> En servicio raid, la unidad de uno de los tamanos es incorrecto (No es G, M, o K)
+22 --> En servicio lvm, tamano del grupo excede el del volumen fisico
+23 --> En servicio lvm, lineas no suficientes

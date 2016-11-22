@@ -5,27 +5,14 @@
 #       de las variables
 
 function getTotalSize {
-  if [[ -n "`echo ${array[1]} | grep G`" ]]
-  then
-    sizeNumber=$(echo ${array[1]} | tr -dc '0-9')
-    sizeNumber=$((sizeNumber * ${sizes[G]}))
-    totalSize=$((totalSize+sizeNumber))
-    sizeNumber=0
-  elif [[ -n "`echo $array[1] | grep M`" ]]
-  then
-    sizeNumber=$(echo $array[1] | tr -dc '0-9')
-    sizeNumber=$((sizeNumber * ${sizes[M]}))
-    totalSize=$((totalSize+sizeNumber))
-    sizeNumber=0
-  elif [[ -n "`echo $array[1] | grep K`" ]]
-  then
-    sizeNumber=$(echo $array[1] | tr -dc '0-9')
-    sizeNumber=$((sizeNumber * ${sizes[K]}))
-    totalSize=$((totalSize+sizeNumber))
-    sizeNumber=0
-  else
-    exit 21
-  fi
+  # Tener en cuenta que si ponemos la version anterior, peta en el bucle de
+  # leida del fichero
+  sizeNumber=$(echo ${array[1]} | tr -dc '0-9')
+  [[ -n "`echo ${array[1]} | grep G`" ]] && sizeNumber=$((sizeNumber * ${sizes[G]}))
+  # pensar en poner mas unidades, si es M se queda igual, y no puede ser menor
+  #[[ -n "`echo ${array[1]} | grep M`" ]] && sizeNumber=$((sizeNumber * ${sizes[M]}))
+  #[[ -n "`echo ${array[1]} | grep K`" ]] && sizeNumber=$((sizeNumber * ${sizes[K]}))
+  totalSize=$((totalSize+sizeNumber))
 }
 
 counterLine=0
@@ -34,7 +21,7 @@ totalSize=0
 #counterLogicDevices=0
 #declare -a sizes
 #declare -a logicDevices
-declare -A sizes=([G]=1073741824 [M]=1048576 [K]=1024)
+declare -A sizes=([G]=1024 [M]=1)
 declare -A pruebita
 while read -r line
 do
@@ -53,7 +40,7 @@ do
       # en lvm, lo que si que hay que comprobar es que los dispositivos existen
       blkid | grep $i > /dev/null
       #[[ $? -ne 0 ]] && exit 21
-      echo -e "[\e[32mINFO\e[0m] Device is a block device, continuing"
+      echo -e "[\e[32mINFO\e[0m] Device $i is a block device, continuing"
     done
     # list=$line
     IFS=$OIFS
@@ -65,22 +52,26 @@ do
     #sizes[$counterLogicDevices]=${array[1]}
     #counterLogicDevices=$((counterLogicDevices+1))
     #group_size
-    pruebita+=( ["${array[0]}"]="${array[1]}" )
     getTotalSize
-    totalSize=$((sizeNumber + totalSize))
+    pruebita+=(["${array[0]}"]="$sizeNumber")
+    sizeNumber=0
   fi
 done < "lvm.conf"
+
+[[ $counterLine -lt 3 ]] && exit 23
 
 echo "This is the total size we will be using: $totalSize"
 # Comprobamos que el tamano total no es superior al de nuestro espacio fisico
 diskTotal=$(df $PWD | awk '/[0-9]%/{print $(NF-2)}')
-[[ $diskTotal -lt $totalSize ]] && exit 22 
+diskTotal=$((diskTotal))
+[[ $diskTotal -lt $totalSize ]] && exit 22
 echo -e "[\e[32mINFO\e[0m] The total size seems to be something we can handle, continuing"
+
 # Pruebita con arrays asociativos
 for key in ${!pruebita[@]}
 do
   # echo "holita"
-  echo ${key} ${pruebita[${key}]}
+  echo "[KEY]: ${key} and [VALUE]: ${pruebita[${key}]}"
 done
 
 # Ahora vamos a instalar lvm
@@ -96,4 +87,41 @@ else
   echo -e "[\e[32mINFO\e[0m] Installed correctly"
 fi
 
+# Empezamos la utilizacion del comando lvm
+# TODO: Preguntar si en el caso de que no existan las particiones, deberian ser creadas para luego usarlas
+# No creo pero bueno
+# First, we create the virtual group
+
+#vgcreate $name ${devicelist[0]}
+echo 'vgcreate '"$name ${deviceList[@]}"
+[[ $? -ne 0 ]] && exit 24
+
+# Now we create logical volumes
+volCounter=0
+for key in ${!pruebita[@]}
+do
+  echo 'lvcreate'" -L${pruebita[${key}]} -n ${key} $name"
+  volCounter=$((volCounter+1))
+  # Y ahora le damos formato a lo que acabamos de crear
+  echo 'mkfs.ext3'" -m 0 /dev/$name/vol0$volCounter"
+  # TODO: Agregar al /etc/fstab, pero en un directorio que no sabemos 
+done
+# Pensar en alguna otra condicion un poco mas fancy
+[[ $? -ne 0 ]] && exit 25
+
+
+
 exit 0
+
+
+
+
+
+
+
+
+
+
+
+
+
