@@ -36,7 +36,8 @@ do
       counterDevices=$((counterDevices+1))
       # Comprobaciones de los dispositivos
         # Existe el dispoistivo?
-      blkid | grep $i > /dev/null
+      #blkid | grep $i > /dev/null
+      fdisk -l | grep $i > /dev/null
       [[ $? -eq 1 ]] && exit 16
         # El dispositivo es un dispositivo de bloques?
       [[ ! -b $i ]] && exit 17
@@ -57,18 +58,22 @@ then
 else
   echo -e "[\e[32mINFO\e[0m] Installing command 'mdadm'"
   export DEBIAN_FRONTEND=noninteractive
-  apt-get -qq -y install mdadm --no-install-recommends > /dev/null   
+  # -qq tiene implicito un -y
+  apt-get -qq install mdadm --no-install-recommends > /dev/null   
   [[ $? -ne 0 ]] && exit 15
   echo -e "[\e[32mINFO\e[0m] Installed correctly"
 fi
 
 # Ejecutamos el comando mdadm
-# echo y | mdadm --create $name --level=$level --raid-devices=$counterDevices $devices
-echo -e '[\e[32mINFO\e[0m] echo y | mdadm --create $name --level=$level --raid-devices=$counterDevices $devices'
+echo y | mdadm --create $name --level=$level --raid-devices=$counterDevices $devices
+#echo -e '[\e[32mINFO\e[0m] echo y | mdadm --create $name --level=$level --raid-devices=$counterDevices $devices'
 [[ $? -ne 0 ]] && exit 18
 echo -e "[\e[32mINFO\e[0m] 'mdadm' command executed succesfully"
 
 # Actualizams el fichero de configuracion de mdadm
+[[ -n "`grep $devicesConf /etc/mdadm/mdadm.conf`" ]] && exit 0
 echo "DEVICE $devices" >> /etc/mdadm/mdadm.conf
 echo "ARRAY $name devices=$devicesConf" >> /etc/mdadm/mdadm.conf
-exit 64
+
+echo -e "[\e[32mINFO\e[0m] succesfully added new devices to 'mdadm.conf' file"
+exit 0

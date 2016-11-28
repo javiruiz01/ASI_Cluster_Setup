@@ -76,9 +76,33 @@ function setUp {
       counterLine=19
       print "error" "$code" "From remote machine, invalid RAID level"
       ;;
+    20)
+      counterLine=86
+      print "error" "$code" "from remote machine, installation of 'lvm' command has failed"
+      ;;
     22)
       counterLine=25
       print "error" "$code" "From remote machine, total size seems to be too big for the machine"
+      ;;
+    23)
+      counterLine=61
+      print "error" "$code" "From remote machine, not enough lines in lvm.conf"
+      ;;
+    24)
+      counterLine=102
+      print "error" "$code" "From remote machine, failed at 'vgcreate' command"
+      ;;
+    25)
+      counterLine=108
+      print "error" "$code" "From remote machine, failed at 'lvcreate' command"
+      ;;
+    26)
+      counterLine=112
+      print "error" "$code" "From remote machine, failed at 'mkfs' command"
+      ;;
+    27)
+      counterLine=97
+      print "error" "$code" "From remote machine, failed at 'pvcreate' command"
       ;;
   esac
 }

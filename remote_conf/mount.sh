@@ -49,4 +49,4 @@ fi
 # else
 #   echo "$name $mountpoint ext4 default 0 0" >> /etc/fstab
 # fi
-exit 64
+exit 0

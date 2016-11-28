@@ -20,7 +20,12 @@
 17 --> En servicio raid, el dispositivo no es un dispositivo de bloques
 18 --> En servicio raid, el comando mdadm no se ha ejecutado correctamente
 19 --> En servicio raid, el nivel de raid no es correcto
-20 --> En servicio raid, instalacion ha fallado
+20 --> En servicio lvm, instalacion ha fallado
 21 --> En servicio raid, la unidad de uno de los tamanos es incorrecto (No es G, M, o K)
 22 --> En servicio lvm, tamano del grupo excede el del volumen fisico
 23 --> En servicio lvm, lineas no suficientes
+24 --> En servicio lvm, fallo en vgcreate
+25 --> En servicio lvm, fallo en lvcreate
+26 --> En servicio lvm, fallo en mkfs
+27 --> En servicio lvm, fallo en pvcreate
+28 --> En servicio nis_server, el fichero conf tiene demasiadas lineas

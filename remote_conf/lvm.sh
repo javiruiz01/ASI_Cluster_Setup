@@ -92,7 +92,12 @@ fi
 # No creo pero bueno
 # First, we create the virtual group
 
-#vgcreate $name ${devicelist[0]}
+# We mark the physical volumes within LVM to indicate that they are ready
+# to be added to a volume group
+echo 'pvcreate'"${deviceList[@]}"
+[[ $? -ne 0 ]] && exit 27
+
+# We create the volume group and add the physical volumes to it
 echo 'vgcreate '"$name ${deviceList[@]}"
 [[ $? -ne 0 ]] && exit 24
 
@@ -101,13 +106,20 @@ volCounter=0
 for key in ${!pruebita[@]}
 do
   echo 'lvcreate'" -L${pruebita[${key}]} -n ${key} $name"
+  [[ $? -ne 0 ]] && exit 25
   volCounter=$((volCounter+1))
   # Y ahora le damos formato a lo que acabamos de crear
-  echo 'mkfs.ext3'" -m 0 /dev/$name/vol0$volCounter"
+  echo 'mkfs.ext4'" /dev/$name/${key}"
+  [[ $? -ne 0 ]] && exit 26
   # TODO: Agregar al /etc/fstab, pero en un directorio que no sabemos 
+  mkdir -p /mnt/$name
+  if [[ -n "`grep /dev/$name/${key} /etc/fstab`" ]]
+  then
+    echo -e "[\e[32mINFO\e[0m] I'm already in the /etc/fstab file"
+  else
+    echo "/dev/$name/${key} /mnt/$name ext4 default 0 0" # >> /etc/fstab 
+  fi
 done
-# Pensar en alguna otra condicion un poco mas fancy
-[[ $? -ne 0 ]] && exit 25
 
 
 
