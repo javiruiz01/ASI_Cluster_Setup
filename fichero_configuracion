@@ -1,9 +1,10 @@
 # Maquina servidora
-192.168.56.102 raid raid.conf
+#192.168.56.102 raid raid.conf
 #192.168.56.102 mount mount_raid.conf
 #192.168.56.102 raid raid.conf
 #192.168.56.102 lvm lvm.conf
 #192.168.56.102 nis_server nis_server.conf
+192.168.56.102 nis_client nis_client.conf
 # Maquina cliente
 # 192.168.0.2 nfs_client nfs_client.conf
 # 192.168.0.3 nfs_client nfs_client.conf
