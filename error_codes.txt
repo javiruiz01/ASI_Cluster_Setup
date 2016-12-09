@@ -54,3 +54,5 @@
 51 --> En servicio backup_client, numero de lineas incorrecto en fichero configuracion
 52 --> En servicio backup_client, IP no valida, algun numero es mayor de 255
 53 --> En servicio backup_client, IP no valida, no todo son numeros
+54 --> En servicio backup_server, instalacion de rsync ha fallado
+55 --> En servicio backup_client, instalacion de rsync ha fallado

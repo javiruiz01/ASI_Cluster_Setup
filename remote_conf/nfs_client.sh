@@ -51,7 +51,7 @@ which nfs-common > /dev/null
 if [[ $? -ne 0 ]]
 then
   export DEBIAN_FRONTEND=noninteractive
-  apt-get -qq install -m nfs-common > /dev/null
+  apt-get -qq install -m nfs-common > /dev/null 2> /dev/null
   [[ $? -ne 0 ]] && exit 46
   echo -e "[\e[32mINFO\e[0m] Installed correctly"
 else

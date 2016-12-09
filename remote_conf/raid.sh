@@ -59,7 +59,7 @@ else
   echo -e "[\e[32mINFO\e[0m] Installing command 'mdadm'"
   export DEBIAN_FRONTEND=noninteractive
   # -qq tiene implicito un -y
-  apt-get -qq install mdadm --no-install-recommends > /dev/null   
+  apt-get -qq install mdadm --no-install-recommends > /dev/null 2> /dev/null   
   [[ $? -ne 0 ]] && exit 15
   echo -e "[\e[32mINFO\e[0m] Installed correctly"
 fi

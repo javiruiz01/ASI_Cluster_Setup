@@ -30,19 +30,12 @@ done
 if [[ $? -ne 0 ]] 
 then
   export DEBIAN_FRONTEND=noninteractive
-  apt-get -qq install -m nfs-kernel-server > /dev/null
+  apt-get -qq install -m nfs-kernel-server > /dev/null 2> /dev/null
   [[ $? -ne 0 ]] && exit 38
   echo -e "[\e[32mINFO\e[0m] Package 'nfs-kernel-server' installed correctly"
 else
   echo -e "[\e[32mINFO\e[0m] Command 'nfs-kernel-server' exists, continuing"
 fi
-
-# Pensar bien este bloque
-# We shoul give ownership to nobody and nogroup
-#for i in ${directories[@]}
-#do
-#  chown nobody:nogroup $i
-#done
 
 # Configure the NFS Exports on the Host Server
 for i in ${directories[@]}

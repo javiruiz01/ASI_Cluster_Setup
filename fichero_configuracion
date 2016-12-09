@@ -7,8 +7,9 @@
 #192.168.56.102 nfs_server nfs_server.conf
 
 # Maquina cliente
-192.168.56.102 nfs_client nfs_client.conf
+#192.168.56.102 nfs_client nfs_client.conf
 # 192.168.0.3 nfs_client nfs_client.conf
 # 192.168.0.4 nfs_client nfs_client.conf
 # 192.168.0.5 nfs_client nfs_client.conf
 #192.168.56.102 nis_client nis_client.conf
+192.168.56.102 backup_client backup_client.conf

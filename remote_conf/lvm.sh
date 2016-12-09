@@ -9,19 +9,14 @@ function getTotalSize {
   # leida del fichero
   sizeNumber=$(echo ${array[1]} | tr -dc '0-9')
   [[ -n "`echo ${array[1]} | grep G`" ]] && sizeNumber=$((sizeNumber * ${sizes[G]}))
-  # pensar en poner mas unidades, si es M se queda igual, y no puede ser menor
-  #[[ -n "`echo ${array[1]} | grep M`" ]] && sizeNumber=$((sizeNumber * ${sizes[M]}))
-  #[[ -n "`echo ${array[1]} | grep K`" ]] && sizeNumber=$((sizeNumber * ${sizes[K]}))
+  [[ -n "`echo ${array[1]} | grep K`" ]] && sizeNumber=$((sizeNumber * ${sizes[K]}))
   totalSize=$((totalSize+sizeNumber))
 }
 
 counterLine=0
 counterPhysDevices=0
 totalSize=0
-#counterLogicDevices=0
-#declare -a sizes
-#declare -a logicDevices
-declare -A sizes=([G]=1024 [M]=1)
+declare -A sizes=([G]=1024 [M]=1 [K]=0.0009765625)
 declare -A pruebita
 while read -r line
 do
@@ -48,10 +43,6 @@ do
   if [[ $counterLine -gt 2 ]]
   then
     read -r -a array <<< "$line"
-    #logicDevices[$counterLogicDevices]=${array[0]}
-    #sizes[$counterLogicDevices]=${array[1]}
-    #counterLogicDevices=$((counterLogicDevices+1))
-    #group_size
     getTotalSize
     pruebita+=(["${array[0]}"]="$sizeNumber")
     sizeNumber=0
@@ -82,14 +73,11 @@ then
 else
   echo -e "[\e[32mINFO\e[0m] Installing command 'lvm'"
   export DEBIAN_FRONTEND=noninteractive
-  apt-get -qq install -m lvm2 > /dev/null
+  apt-get -qq install -m lvm2 > /dev/null  2> /dev/null
   [[ $? -ne 0 ]] && exit 20
   echo -e "[\e[32mINFO\e[0m] Installed correctly"
 fi
 
-# Empezamos la utilizacion del comando lvm
-# TODO: Preguntar si en el caso de que no existan las particiones, deberian ser creadas para luego usarlas
-# No creo pero bueno
 # First, we create the virtual group
 
 # We mark the physical volumes within LVM to indicate that they are ready
@@ -120,8 +108,6 @@ do
     echo "/dev/$name/${key} /mnt/$name ext4 default 0 0" # >> /etc/fstab 
   fi
 done
-
-
 
 exit 0
 

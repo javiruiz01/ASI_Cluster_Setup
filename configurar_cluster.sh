@@ -32,7 +32,7 @@ function setUp {
   tar -cf data.tar $2.sh $3 > /dev/null
   scp data.tar root@$1:~/ > /dev/null
   print "info" "Connecting via SSH"
-  ssh -n root@$1 'tar -xvf data.tar && rm data.tar; ./'"$2"'.sh'
+  ssh -n root@$1 'tar -xvf data.tar && rm data.tar; ./'"$2"'.sh' 2>/dev/null
   # Ahora cogemos los codigos de errores
   code=$?
   case $code in
@@ -198,12 +198,15 @@ function setUp {
       ;;
     51) 
       counterLine=13
-      print "error" "$code" "From remote machine, invalid IP, at least one number is bigger than 255"
+      print "error" "$code" "From remote machine, too many lines in conf file"
       ;;
     52)
+      counterLine=12
+      print "error" "$code" "From remote machine, invalid IP, at least one number is bigger than 255"
+      ;;
+    53)
       counterLine=17
       print "error" "$code" "From remote machine, invalid IP, not everything are numbers"
-      ;;
   esac
 }
 

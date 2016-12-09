@@ -41,7 +41,7 @@ which rpcbind > /dev/null
 if [[ $? -ne 0 ]] 
 then
   export DEBIAN_FRONTEND=noninteractive
-  apt-get -qq install -m portmap --no-install-recommends > /dev/null
+  apt-get -qq install -m portmap --no-install-recommends > /dev/null 2> /dev/null
   [[ $? -ne 0 ]] && exit 34
 else
   echo -e "[\e[32mINFO\e[0m] Command is already installed, continuing"
@@ -56,7 +56,7 @@ which ypserv > /dev/null
 if [[ $? -ne 0 ]]
 then
   export DEBIAN_FRONTEND=noninteractive
-  apt-get -qq install nis --no-install-recommends > /dev/null
+  apt-get -qq install nis --no-install-recommends > /dev/null 2> /dev/null
   [[ $? -ne 0 ]] && exit 35
 else
   echo -e "[\e[32mINFO\e[0m] Command is already installed, continuing"
@@ -65,6 +65,5 @@ fi
 # Mirar comprobaciones fancies para poner aqui
 # porque a lo mejor puede que ya exista
 echo "domain $domainName server $ip" >> /etc/yp.conf
-
 
 exit 0

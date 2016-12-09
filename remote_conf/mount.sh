@@ -43,10 +43,11 @@ fi
 # mount -t ext4 $name $mountpoint
 
 # Ahora nos aseguramos que se monte siempre el dispositivo
-# if [[ -n "`grep $name /etc/fstab`" ]]
-# then 
-#   echo -e "[\e[32mINFO\e[0m] I'm already in the /etc/fstab file"
-# else
-#   echo "$name $mountpoint ext4 default 0 0" >> /etc/fstab
-# fi
+if [[ -n "`grep $name /etc/fstab`" ]]
+then 
+  echo -e "[\e[32mINFO\e[0m] I'm already in the /etc/fstab file"
+else
+  echo "$name $mountpoint ext4 default 0 0" >> /etc/fstab
+fi
+
 exit 0

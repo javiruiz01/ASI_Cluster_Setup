@@ -14,23 +14,23 @@ which rpcbind > /dev/null
 if [[ $? -ne 0 ]] 
 then
   export DEBIAN_FRONTEND=noninteractive
-  apt-get install portmap --no-install-recommends
+  apt-get install portmap --no-install-recommends > /dev/null 2> /dev/null
   # Condicion, ver si se ha instalado bien
   echo -e "[\e[32mINFO\e[0m] Command 'portmap' installed correctly"
 else
   echo -e "[\e[32mINFO\e[0m] Command is already installed, continuing"
 fi
 
-echo -e "[\e[32mINFO\e[0m] Updating 'portmap' defaults"
+# echo -e "[\e[32mINFO\e[0m] Updating 'portmap' defaults"
 # solo parece que da problemas, vamos a intentar seguir sin este comando
-#update-rc.d portmap defaults 10
+# update-rc.d portmap defaults 10
 # Condicion
 
 which ypserv > /dev/null
 if [[ $? -ne 0 ]] 
 then
   export DEBIAN_FRONTEND=noninteractive
-  apt-get -qq install nis --no-install-recommends > /dev/null
+  apt-get -qq install nis --no-install-recommends > /dev/null 2> /dev/null
   [[ $? -ne 0 ]] && exit 29
   echo -e "[\e[32mINFO\e[0m] Commands for 'NIS_server' installation went well, continuing"
 else
