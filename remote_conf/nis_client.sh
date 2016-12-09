@@ -13,6 +13,8 @@ function check_ip {
     if [[ $1 -le 255 && $2 -le 255 && $3 -le 255 && $4 -le 255 ]]
     then
       echo -e "[\e[32mINFO\e[0m] Valid IP :)"
+    else 
+      exit 31
     fi
     IFS=$OIFS
   else
@@ -40,6 +42,7 @@ if [[ $? -ne 0 ]]
 then
   export DEBIAN_FRONTEND=noninteractive
   apt-get -qq install -m portmap --no-install-recommends > /dev/null
+  [[ $? -ne 0 ]] && exit 34
 else
   echo -e "[\e[32mINFO\e[0m] Command is already installed, continuing"
 fi
@@ -54,6 +57,7 @@ if [[ $? -ne 0 ]]
 then
   export DEBIAN_FRONTEND=noninteractive
   apt-get -qq install nis --no-install-recommends > /dev/null
+  [[ $? -ne 0 ]] && exit 35
 else
   echo -e "[\e[32mINFO\e[0m] Command is already installed, continuing"
 fi

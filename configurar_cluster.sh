@@ -104,6 +104,106 @@ function setUp {
       counterLine=97
       print "error" "$code" "From remote machine, failed at 'pvcreate' command"
       ;;
+    28)
+      counterLine=8
+      print "error" "$code" "From remote machine, too many lines in conf file"
+      ;;
+    29)
+      counterLine=34
+      print "error" "$code" "From remote machine, installation of 'nis' packages failed"
+      ;;
+    30)
+      counterLine=42
+      print "error" "$code" "From remote machine, failure editing NIS's domain name"
+      ;;
+    31)
+      counterLine=17
+      print "error" "$code" "From remote machine, invalid IP, at least one number is bigger than 255"
+      ;;
+    32)
+      counterLine=22
+      print "error" "$code" "From remote machine, invalid IP, not everything are numbers"
+      ;;
+    33)
+      counterLine=38
+      print "error" "$code" "From remote machine, too many lines in conf file"
+      ;;
+    34)
+      counterLine=45
+      print "error" "$code" "From remote machine, installation of 'portmap' package failed"
+      ;;
+    35)
+      counterLine=60
+      print "error" "$code" "From remote machine, installation of 'nis' package failed"
+      ;;
+    36)
+      counterLine=11
+      print "error" "$code" "From remote machine, specified route does not exist"
+      ;;
+    37)
+      counterLine=13
+      print "error" "$code" "From remote machine, specified route does not have the necessary permissions"
+      ;;
+    38)
+      counterLine=34
+      print "error" "$code" "From remote machine, installation of 'nfs-kernel-server' package failed"
+      ;;
+    39)
+      counterLine=20
+      print "error" "$code" "From remote machine, too many lines in conf file"
+      ;;
+    40)
+      counterLine=61
+      print "error" "$code" "From remote machine, failed to create the NFS table"
+      ;;
+    41)
+      counterLine=65
+      print "error" "$code" "From remote machine, failed to start the NFS service"
+      ;;
+    42)
+      counterLine=41
+      print "error" "$code" "From remote machine, incorrect number of lines in conf file"
+      ;;
+    43)
+      counterLine=13
+      print "error" "$code" "From remote machine, invalid IP, at least one number is bigger than 255"
+      ;;
+    44)
+      counterLine=17
+      print "error" "$code" "From remote machine, invalid IP, not everything are numbers"
+      ;;
+    45)
+      counterLine=31
+      print "error" "$code" "From remote machine, there are missing arguments in a line at the conf file"
+      ;;
+    46)
+      counterLine=55
+      print "error" "$code" "From remote machine, installation of 'nfs-common' package failed"
+      ;;
+    47)
+      counterLine=70
+      print "error" "$code" "From remote machine, failure while mounting the remote directory"
+      ;;
+    48)
+      counterLine=72
+      print "error" "$code" "From remote machine, NFS shares have not been properly mounted"
+      ;;
+    49)
+      counterLine=8
+      print "error" "$code" "From remote machine, specified directory in conf file does not exist"
+      ;;
+    50)
+      counterLine=6
+      print "error" "$code" "From remote machine, incorrect number of lines in conf file"
+      ;;
+    51) 
+      counterLine=13
+      print "error" "$code" "From remote machine, invalid IP, at least one number is bigger than 255"
+      ;;
+    52)
+      counterLine=17
+      print "error" "$code" "From remote machine, invalid IP, not everything are numbers"
+      ;;
   esac
 }
 

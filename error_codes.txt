@@ -1,4 +1,4 @@
-# Codigos de errores utilizados en configurar_cluster.sh
+# Codigos de errores a utilizar en configurar_cluster.sh
 
 02 --> HELP
 03 --> Fallo en el checkeo de la ip
@@ -29,3 +29,28 @@
 26 --> En servicio lvm, fallo en mkfs
 27 --> En servicio lvm, fallo en pvcreate
 28 --> En servicio nis_server, el fichero conf tiene demasiadas lineas
+29 --> En servicio nis_server, fallo en la instalacion del paquete nis
+30 --> En servicio nis_server, fallo en el cambio del domain name
+31 --> En servicio nis_client, IP no valida, algun numero es mayor que 255
+32 --> En servicio nis_client, IP no valida, no todo son numeros
+33 --> En servicio nis_client, numero de lineas de nis_client.conf es demasiado grande
+34 --> En servicio nis_client, fallo en instalacion del paquete portmap
+35 --> En servicio nis_client, fallo en instalacion del paquete nis
+36 --> En servicio nfs_server, la ruta especificada en nfs_server.conf no existe
+37 --> En servicio nfs_server, la ruta especificada no tiene permisos necesarios
+38 --> En servicio nfs_server, fallo en instalacion del paquete nfs-kernel-server
+39 --> En servicio nfs_server, numero de lineas incorrecto en nfs_server.conf
+40 --> En servicio nfs_server, fallor al crear la tabla con los exports
+41 --> En servicio nfs_server, fallo al arrancar el servicio NFS
+42 --> En servicio nfs_client, numero de lineas insuficientes en nfs_client.conf
+43 --> En servicio nfs_client, IP no valida, algun numero es mayor que 255
+44 --> En servicio nfs_client, IP no valida, algun numero es mayor que 255
+45 --> En servicio nfs_client, falta alguno de los elementos de la linea en nfs_client.conf
+46 --> En servicio nfs_client, fallo en instalacion del paquete nfs-common
+47 --> En servicio nfs_client, fallo al realizar el montaje con el servidor
+48 --> En servicio nfs_client, fallo en la segunda comprobacion del montaje
+49 --> En servicio backup_server, directorio en fichero conf no existe
+50 --> En servicio backup_server, numero de lineas incorrecto en fichero configuracion
+51 --> En servicio backup_client, numero de lineas incorrecto en fichero configuracion
+52 --> En servicio backup_client, IP no valida, algun numero es mayor de 255
+53 --> En servicio backup_client, IP no valida, no todo son numeros
