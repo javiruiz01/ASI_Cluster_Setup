@@ -1,9 +1,5 @@
 #! /bin/bash
 
-# TODO: Hacer todas las comprobaciones despues de haber mirado la teoria
-#       se hablan de cosas muy raras. Solo estan asignados los nombres
-#       de las variables
-
 function getTotalSize {
   # Tener en cuenta que si ponemos la version anterior, peta en el bucle de
   # leida del fichero
@@ -58,13 +54,6 @@ diskTotal=$((diskTotal))
 [[ $diskTotal -lt $totalSize ]] && exit 22
 echo -e "[\e[32mINFO\e[0m] The total size seems to be something we can handle, continuing"
 
-# Pruebita con arrays asociativos
-for key in ${!pruebita[@]}
-do
-  # echo "holita"
-  echo "[KEY]: ${key} and [VALUE]: ${pruebita[${key}]}"
-done
-
 # Ahora vamos a instalar lvm
 which lvm > /dev/null
 if [[ $? -eq 0 ]]
@@ -82,22 +71,41 @@ fi
 
 # We mark the physical volumes within LVM to indicate that they are ready
 # to be added to a volume group
-echo 'pvcreate'"${deviceList[@]}"
+echo 'pvcreate '"${deviceList[@]}"
+pvcreate ${deviceList[@]}
 [[ $? -ne 0 ]] && exit 27
 
 # We create the volume group and add the physical volumes to it
 echo 'vgcreate '"$name ${deviceList[@]}"
+vgcreate $name ${deviceList[@]}
 [[ $? -ne 0 ]] && exit 24
+
+#TODO: Comprobar que existe espacio suficiente en las particiones
+#      con vgdisplay
+echo -e "[\e[32mINFO\e[0m] Testing if there is enough space"
+touch temp.txt
+vgdisplay --colon --units m $name >>> temp.txt
+read -r line < "temp.txt"
+OIFS=$IFS
+IFS=":"
+set -- $line
+freeSpace=${16}
+freeSpace=$((freeSpace*4))
+[[ $freeSpace -lt $totalSize ]] && exit 60 #########
+echo -e "[\e[32mINFO\e[0m] The total size seems to be something we can handle, continuing"
+IFS=$OIFS
 
 # Now we create logical volumes
 volCounter=0
 for key in ${!pruebita[@]}
 do
   echo 'lvcreate'" -L${pruebita[${key}]} -n ${key} $name"
+  lvcreate -L${pruebita[${key}]} -n ${key} $name
   [[ $? -ne 0 ]] && exit 25
   volCounter=$((volCounter+1))
   # Y ahora le damos formato a lo que acabamos de crear
   echo 'mkfs.ext4'" /dev/$name/${key}"
+  mkfs.ext4 /dev/$name/${key}
   [[ $? -ne 0 ]] && exit 26
   # TODO: Agregar al /etc/fstab, pero en un directorio que no sabemos 
   mkdir -p /mnt/$name
@@ -110,16 +118,3 @@ do
 done
 
 exit 0
-
-
-
-
-
-
-
-
-
-
-
-
-

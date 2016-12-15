@@ -40,7 +40,7 @@ else
   echo -e "[\e[32mINFO\e[0m] Device exists, continuing" 1>&2
 fi
 
-# mount -t ext4 $name $mountpoint
+mount -t ext4 $name $mountpoint
 
 # Ahora nos aseguramos que se monte siempre el dispositivo
 if [[ -n "`grep $name /etc/fstab`" ]]

@@ -65,8 +65,8 @@ else
 fi
 
 # Ejecutamos el comando mdadm
+echo -e '[\e[32mINFO\e[0m] echo y | mdadm '"--create $name --level=$level --raid-devices=$counterDevices $devices"
 echo y | mdadm --create $name --level=$level --raid-devices=$counterDevices $devices
-#echo -e '[\e[32mINFO\e[0m] echo y | mdadm --create $name --level=$level --raid-devices=$counterDevices $devices'
 [[ $? -ne 0 ]] && exit 18
 echo -e "[\e[32mINFO\e[0m] 'mdadm' command executed succesfully"
 

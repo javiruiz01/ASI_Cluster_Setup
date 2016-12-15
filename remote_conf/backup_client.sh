@@ -1,14 +1,14 @@
 #! /bin/bash
 
 function check_ip {
-  if [[ $server =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]
+  if [[ $1 =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]
   then
     OIFS=$IFS
     IFS="."
-    set -- $server
+    set -- $1
     if [[ $1 -le 255 && $2 -le 255 && $3 -le 255 && $4 -le 255 ]]
     then
-      echo -e "[\e[32mINFO\e[0m] Valid IP"
+      echo -e "[\e[32mINFO\e[0m] Valid IP: $server"
     else
       exit 52
     fi
@@ -23,7 +23,6 @@ function check_ip {
 #   direccion-del-servidor-de-backup
 #   ruta-de-directorio-destino-del-backup
 #   periodicidad-del-backup-en-horas
-echo "HOLITA QUE TAL"
 lineCounter=0
 while read -r line
 do
@@ -37,7 +36,6 @@ do
   then 
     server=$line 
     check_ip "$server"
-    echo -e "[\e[32mINFO\e[0m] This is the IP: $server"
   elif [[ $lineCounter -eq 2 ]]
   then
     serverRoute=$line 
@@ -46,8 +44,17 @@ do
   then
     # Tenemos que comprobar que la periodicidad es un numero
     delorean=$line 
-    #[[ $delorean == ?(-)+([0-9]) ]] && exit 57
-    echo -e "[\e[32mINFO\e[0m] This is our delorean: $delorean"
+    if [[ $delorean == ?(-)+([0-9]) ]]
+    then
+      if [[ $delorean -gt 0 ]]
+      then
+        echo -e "[\e[32mINFO\e[0m] Schedule time: $delorean hour(s)"
+      else
+        exit 58
+      fi
+    else
+      exit 57 
+    fi
   else
     exit 51 
   fi
@@ -57,6 +64,8 @@ done < "backup_client.conf"
 # Comprobamos que las lineas eran las correctas
 [[ $lineCounter -ne 4 ]] && exit 54
 
+# Tecnicamente ya esta instalado rsync en las maquinas que nos dan, pero lo
+# comprobamos igualmente
 which rsync > /dev/null
 if [[ $? -ne 0 ]] 
 then
@@ -74,16 +83,31 @@ fi
 # "se podra asumir que un servidor de ssh esta presente en todas las maquinas y que el 
 #  usuario root puede conectarse de unas a otras sin tener que insertar contrasena"
 
-echo 'rsync'" -a $directory root@$server:$serverRoute"
-rsync -a $directory root@$server:$serverRoute
+#echo 'rsync'" -a $directory root@$server:$serverRoute"
+rsync -a $directory root@$server:$serverRoute > /dev/null 2> /dev/null
 [[ $? -ne 0 ]] && exit 56
 
 # Periodicidad del backup en horas
 rsyncRoute=`which rsync`
-touch $pwd/rsync.sh
-chmod +x $pwd/rsync.sh
-echo "$rsyncRoute -a $directory root@$server:$serverRoute" >> $pwd/rsync.sh
-cat $pwd/rsync.sh
-(crontab -l 2>/dev/null; echo "* */$delorean * * * $pwd/rsync.sh") | crontab -
+touch $PWD/rsync.sh
+chmod +x $PWD/rsync.sh
+if [[ -n "`cat $PWD/rsync.sh | grep "$rsyncRoute -a $directory root@$server:$serverRoute"`" ]] 
+then
+  echo -e "[\e[32mINFO\e[0m] Already in $PWD/rsync.sh file"
+else
+  echo "$rsyncRoute -a $directory root@$server:$serverRoute" >> $PWD/rsync.sh
+fi
+if [[ ! -n "`crontab -l | grep $PWD/rsync.sh`" ]]
+then
+  (crontab -l 2>/dev/null; echo "* */$delorean * * * $PWD/rsync.sh") | crontab -
+  if [[ $delorean -eq 1 ]]
+  then
+    echo -e "[\e[32mINFO\e[0m] Crontab has been installed, it will execute every $delorean hour"
+  else
+    echo -e "[\e[32mINFO\e[0m] Crontab has been installed, it will execute every $delorean hours"
+  fi
+else
+  echo -e "[\e[32mINFO\e[0m] Crontab was already installed"
+fi
 
 exit 0

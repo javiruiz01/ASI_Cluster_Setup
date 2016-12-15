@@ -8,7 +8,8 @@ function print {
   
   type=$1
   message=$2
-
+  # Se nos pide que todos los mensajes de informacion salgan por la 
+  # salida de error en el enunciado
   if [[ $type == "info" ]]
   then
     echo -e "[${green}INFO${end}] $message" 1>&2
@@ -207,6 +208,27 @@ function setUp {
     53)
       counterLine=17
       print "error" "$code" "From remote machine, invalid IP, not everything are numbers"
+      ;;
+    54)
+      counterLine=57
+      print "error" "$code" "From remote machine, incorrect number of lines in conf file"
+      ;;
+    55)
+      counterLine=67
+      print "error" "$code" "From remote machine, installation of 'rsync' command was unsuccesful"
+      ;;
+    56)
+      counterLine=33
+      print "error" "$code" "From remote machine, client's directory does not seem to exist"
+      ;;
+    57)
+      counterLine=56
+      print "error" "$code" "From remote machine, periodicty time does not seem to be a number"
+      ;;
+    58)
+      counterLine=53
+      print "error" "$code" "From remote machine, periodicty time seems to be too small"
+      ;;
   esac
 }
 

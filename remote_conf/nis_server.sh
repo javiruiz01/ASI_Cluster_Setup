@@ -9,6 +9,8 @@ do
   echo -e "[\e[32mINFO\e[0m] Domain name is: $domainName"
 done < "nis_server.conf"
 
+[[ $lineCounter -eq 0 ]] && exit # dkcubawkucvbawekcbkebckawebvjabwecbvw ATENCION
+
 # Check for installation of the requiered packages
 which rpcbind > /dev/null
 if [[ $? -ne 0 ]] 
@@ -20,11 +22,6 @@ then
 else
   echo -e "[\e[32mINFO\e[0m] Command is already installed, continuing"
 fi
-
-# echo -e "[\e[32mINFO\e[0m] Updating 'portmap' defaults"
-# solo parece que da problemas, vamos a intentar seguir sin este comando
-# update-rc.d portmap defaults 10
-# Condicion
 
 which ypserv > /dev/null
 if [[ $? -ne 0 ]] 
