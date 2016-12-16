@@ -49,7 +49,7 @@ done < "lvm.conf"
 
 echo "This is the total size we will be using: $totalSize"
 # Comprobamos que el tamano total no es superior al de nuestro espacio fisico
-diskTotal=$(df $PWD | awk '/[0-9]%/{print $(NF-2)}')
+diskTotal=$(df -m $PWD | awk '/[0-9]%/{print $(NF-2)}')
 diskTotal=$((diskTotal))
 [[ $diskTotal -lt $totalSize ]] && exit 22
 echo -e "[\e[32mINFO\e[0m] The total size seems to be something we can handle, continuing"
@@ -84,7 +84,7 @@ vgcreate $name ${deviceList[@]}
 #      con vgdisplay
 echo -e "[\e[32mINFO\e[0m] Testing if there is enough space"
 touch temp.txt
-vgdisplay --colon --units m $name >>> temp.txt
+vgdisplay --colon --units m $name >> temp.txt
 read -r line < "temp.txt"
 OIFS=$IFS
 IFS=":"
@@ -104,17 +104,17 @@ do
   [[ $? -ne 0 ]] && exit 25
   volCounter=$((volCounter+1))
   # Y ahora le damos formato a lo que acabamos de crear
-  echo 'mkfs.ext4'" /dev/$name/${key}"
-  mkfs.ext4 /dev/$name/${key}
-  [[ $? -ne 0 ]] && exit 26
-  # TODO: Agregar al /etc/fstab, pero en un directorio que no sabemos 
-  mkdir -p /mnt/$name
-  if [[ -n "`grep /dev/$name/${key} /etc/fstab`" ]]
-  then
-    echo -e "[\e[32mINFO\e[0m] I'm already in the /etc/fstab file"
-  else
-    echo "/dev/$name/${key} /mnt/$name ext4 default 0 0" # >> /etc/fstab 
-  fi
+#  echo 'mkfs.ext4'" /dev/$name/${key}"
+#  mkfs.ext4 /dev/$name/${key}
+#  [[ $? -ne 0 ]] && exit 26
+#  # TODO: Agregar al /etc/fstab, pero en un directorio que no sabemos 
+#  mkdir -p /mnt/$name
+#  if [[ -n "`grep /dev/$name/${key} /etc/fstab`" ]]
+#  then
+#    echo -e "[\e[32mINFO\e[0m] I'm already in the /etc/fstab file"
+#  else
+#    echo "/dev/$name/${key} /mnt/$name ext4 default 0 0" # >> /etc/fstab 
+#  fi
 done
 
 exit 0

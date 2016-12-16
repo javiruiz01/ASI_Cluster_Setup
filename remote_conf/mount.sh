@@ -40,14 +40,16 @@ else
   echo -e "[\e[32mINFO\e[0m] Device exists, continuing" 1>&2
 fi
 
-mount -t ext4 $name $mountpoint
+type=$(blkid -o value -s TYPE $name)
+echo "SOY EL TIPO: $type"
+mount -t $type $name $mountpoint
 
 # Ahora nos aseguramos que se monte siempre el dispositivo
 if [[ -n "`grep $name /etc/fstab`" ]]
 then 
   echo -e "[\e[32mINFO\e[0m] I'm already in the /etc/fstab file"
 else
-  echo "$name $mountpoint ext4 default 0 0" >> /etc/fstab
+  echo "$name $mountpoint $type default 0 0" >> /etc/fstab
 fi
 
 exit 0

@@ -56,3 +56,5 @@
 53 --> En servicio backup_client, IP no valida, no todo son numeros
 54 --> En servicio backup_server, instalacion de rsync ha fallado
 55 --> En servicio backup_client, instalacion de rsync ha fallado
+56 --> En servicio nis_server, el fichero de configuracion esta vacio
+57 --> en servicio nis_server, la instalacion de portmap ha fallado
