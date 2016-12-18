@@ -1,6 +1,7 @@
 #! /bin/bash
 
 function check_ip {
+  ip=$1
   if [[ $ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]
   then
     OIFS=$IFS
@@ -35,12 +36,13 @@ do
   # Ahora verificamos todo
   check_ip "${array[0]}"  # El resto de elementos corresponden al servidor NFS
                           # pensar en como probarlos
-  lineCounter=$((lineCounter+1))
+  # Hay que comprobar que cada linea tiene 3 cosas
 done < "nfs_client.conf"
 
 [[ $lineCounter -eq 0 ]] && exit 42
 
 lineCounter=$((lineCounter-1))
+echo -e "[\e[32mINFO\e[0m] Testing to see if array is working properly"
 for i in `seq 0 $lineCounter` 
 do
   echo "[IP]: ${ip[$i]}, [REMOTE]: ${remote[$i]}, [MOUNT]: ${mount[$i]}"
@@ -67,15 +69,17 @@ do
   fi
   # Now we mount the remote directory addressing our host server
   echo 'mount'" ${ip[$i]}:${remote[$i]} ${mount[$i]}"
+  mount ${ip[$i]}:${remote[$i]} ${mount[$i]} 
   [[ $? -ne 0 ]] && exit 47
   # Check to see if the NFS shares have been properly mounted
-  #[[ ! -n "`mount -t nfs | grep ${ip[$i]}`" ]] && exit 48
+  [[ ! -n "`df -h | grep ${ip[$i]}`" ]] && exit 48
   # Make mount permanent by adding to /etc/fstab
   if [[ -n "`grep ${ip[$i]}:${remote[$i]} /etc/fstab`" ]]
   then
     echo -e "[\e[32mINFO\e[0m] I'm already in the /etc/fstab file"
   else
-    echo "${ip[$i]}:${remote[$i]} ${mount[$i]} ext4 default 0 0" # >> /etc/fstab
+    echo -e "[\e[32mINFO\e[0m] Exporting to /etc/fstab"
+    echo "${ip[$i]}:${remote[$i]} ${mount[$i]} nfs auto,noatime,nolock,bg,nfsvers=4,intr,tcp,actimeo=1800 0 0" >> /etc/fstab
   fi
 done
 

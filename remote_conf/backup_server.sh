@@ -9,6 +9,8 @@ do
   counterLine=$((counterLine+1))
 done < "backup_server.conf"
 
+[[ $counterLine -eq 0 ]] && exit 58
+
 which rsync > /dev/null
 if [[ $? -ne 0 ]] 
 then
@@ -16,7 +18,7 @@ then
   export DEBIAN_FRONTEND=noninteractive
   apt-get -qq install -m rsync > /dev/null 2> /dev/null
   [[ $? -ne 0 ]] && exit 54
-  echo -e "[\e[32mINFO\e[0m] Installed correctly"2
+  echo -e "[\e[32mINFO\e[0m] Installed correctly"
 else
   echo -e "[\e[32mINFO\e[0m] Command 'rsync' exists, continuing"
 fi

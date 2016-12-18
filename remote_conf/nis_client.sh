@@ -12,7 +12,7 @@ function check_ip {
     set -- $ip
     if [[ $1 -le 255 && $2 -le 255 && $3 -le 255 && $4 -le 255 ]]
     then
-      echo -e "[\e[32mINFO\e[0m] Valid IP :)"
+      echo -e "[\e[32mINFO\e[0m] Valid IP"
     else 
       exit 31
     fi
@@ -65,5 +65,18 @@ fi
 # Mirar comprobaciones fancies para poner aqui
 # porque a lo mejor puede que ya exista
 echo "domain $domainName server $ip" >> /etc/yp.conf
+
+# 
+domainname $domainName
+domainName > /etc/defaultdomain
+
+/usr/sbin/ypinit -c
+
+echo -e "[\e[32mINFO\e[0m] Restarting yp service"
+/usr/lib/netsvc/yp/ypstop
+/usr/lib/netsvc/yp/ypstart
+
+
+
 
 exit 0

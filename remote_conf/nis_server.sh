@@ -38,6 +38,9 @@ fi
 nisdomainname $domainName
 [[ $? -ne 0 ]] && exit 30
 
+# Guardamos el servidor en /etc/defaultdomain
+echo "$domainName" > /etc/defaultdomain
+
 touch /etc/sysconfig/network
 echo "NISDOMAIN=$domainName" >> /etc/sysconfig/network
 
@@ -58,6 +61,9 @@ fi
 # Restart the NIS daemon
 #echo -e "[\e[32mINFO\e[0m] Restarting nis"
 #/etc/init.d/nis restart
+
+# We generate the NIS (YP) database
+/usr/lib/yp/ypinit -m 
 
 echo -e "[\e[32mINFO\e[0m] Restarting NIS service: ypserv"
 service ypserv restart

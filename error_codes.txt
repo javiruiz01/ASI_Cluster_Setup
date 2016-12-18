@@ -58,3 +58,5 @@
 55 --> En servicio backup_client, instalacion de rsync ha fallado
 56 --> En servicio nis_server, el fichero de configuracion esta vacio
 57 --> en servicio nis_server, la instalacion de portmap ha fallado
+58 --> en servicio backup_server, fichero de configuracion estávacio
+59 --> En servicio nfs_client, no hay 3 elementos por linea

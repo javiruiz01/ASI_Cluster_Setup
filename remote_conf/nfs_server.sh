@@ -9,9 +9,6 @@ while read -r line
 do
   # Comprobar que rutas existen en la maquina 
   [[ ! -d $line ]] && exit 36
-  # Probar si esta linea funciona :P
-  [[ ! -x $line ]] || [[ ! -r $line ]] || [[ ! -w $line ]] && exit 37 
-  # Si hemos pasado las pruebas, pues lo guardamos en el array
   directories[i]=$line
   i=$((i+1))
   lineCounter=$((lineCounter+1))
@@ -41,20 +38,17 @@ fi
 for i in ${directories[@]}
 do
   # Comprobar que no exista ya una linea con ese directorio
-  if [[ -n "`grep $i /etc/exports`" ]]
-  then
-    continue
-  fi
-  # Preguntar por la parte de todas las interfaces del servidor, ponemos IP de ejemplo
-  echo "$i 111.111.111.111 (rw,sync,no_subtree_check)" >> /etc/exports
+  [[ -n "`grep "$i * " /etc/exports`" ]] && continue
+  echo -e "[\e[32mINFO\e[0m] Exporting to: "'/etc/exports'
+  echo "$i * (rw,sync,no_subtree_check,no_root_squash)" >> /etc/exports
 done
 
 # Create the NFS table that holds the exports
-echo 'exportfs -a'
+exportfs -a
 [[ $? -ne 0 ]] && exit 40
 
 # Start NFS service
-echo 'service nfs-kernel-server start' 
+service nfs-kernel-server start 
 [[ $? -ne 0 ]] && exit 41
 
 exit 0
