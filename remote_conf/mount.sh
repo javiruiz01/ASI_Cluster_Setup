@@ -24,32 +24,21 @@ then
   echo -e "[\e[32mINFO\e[0m] Creating directory" 1>&2
   mkdir $mountpoint
 else
-  if [[ "$(ls -A $mountpoint)" ]]
-  then
-    exit 12
-  else
-    echo -e "[\e[32mINFO\e[0m] Directory is empty, continuing" 1>&2
-  fi
+  [[ "$(ls -A $mountpoint)" ]] && exit 12
+  echo -e "[\e[32mINFO\e[0m] Directory is empty, continuing" 1>&2
 fi
 
 blkid | grep $name
-if [[ $? -eq 1 ]]
-then
-  exit 13
-else
-  echo -e "[\e[32mINFO\e[0m] Device exists, continuing" 1>&2
-fi
+[[ $? -ne 0 ]] &&  exit 13
+echo -e "[\e[32mINFO\e[0m] Device exists, continuing" 1>&2
 
 type=$(blkid -o value -s TYPE $name)
-echo "SOY EL TIPO: $type"
+#echo "SOY EL TIPO: $type"
 mount -t $type $name $mountpoint
 
 # Ahora nos aseguramos que se monte siempre el dispositivo
-if [[ -n "`grep $name /etc/fstab`" ]]
-then 
-  echo -e "[\e[32mINFO\e[0m] I'm already in the /etc/fstab file"
-else
-  echo "$name $mountpoint $type default 0 0" >> /etc/fstab
-fi
+[[ -n "`grep $name /etc/fstab`" ]] && exit 0
+echo -e "[\e[32mINFO\e[0m] Adding device to '/etc/fstab' file" 1>&2
+echo "$name $mountpoint $type default 0 0" >> /etc/fstab
 
 exit 0

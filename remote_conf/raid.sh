@@ -10,13 +10,13 @@ do
   if [[ $counterLine -eq 1 ]]
   then
     name=$line
-    echo -e "[\e[32mINFO\e[0m] This is name of the raid device: $name"
+    echo -e "[\e[32mINFO\e[0m] This is name of the raid device: $name" 1>&2
   elif [[ $counterLine -eq 2 ]]
   then
     level=$line
     # Comprobacion del nivel
-    options="linear, raid0, 0, stripe, raid1, 1, mirror, raid4, 4, raid5, 5, raid6, 6, raid10, 10, multipath, mp, faulty, container"
-    [[ $options != *"$level"* ]] && exit 19
+    options="linear,raid0,0,stripe,raid1,1,mirror,raid4,4,raid5,5,raid6,6,raid10,10,multipath mp,faulty,container"
+    [[ $options == *"$level"* ]] && exit 19
     echo -e "[\e[32mINFO\e[0m] This is the level we will be using: $level"
   else
     devices=$line
@@ -38,7 +38,7 @@ do
         # Existe el dispoistivo?
       #blkid | grep $i > /dev/null
       fdisk -l | grep $i > /dev/null
-      [[ $? -eq 1 ]] && exit 16
+      [[ $? -ne 1 ]] && exit 16
         # El dispositivo es un dispositivo de bloques?
       [[ ! -b $i ]] && exit 17
       echo -e "[\e[32mINFO\e[0m] Device '$i' exists, continuing" 1>&2
@@ -46,6 +46,8 @@ do
     IFS=$OIFS
   fi
 done < "raid.conf"
+
+[[ $counterLine -eq 0 ]] && exit 63 
 
 # En realidad, lo de coger los dispositivos solo nos va a servir para comprobar
 # que exite, porque al comando mdadm se lo pasamos directamente
@@ -75,5 +77,5 @@ echo -e "[\e[32mINFO\e[0m] 'mdadm' command executed succesfully"
 echo "DEVICE $devices" >> /etc/mdadm/mdadm.conf
 echo "ARRAY $name devices=$devicesConf" >> /etc/mdadm/mdadm.conf
 
-echo -e "[\e[32mINFO\e[0m] succesfully added new devices to 'mdadm.conf' file"
+echo -e "[\e[32mINFO\e[0m] Succesfully added new devices to 'mdadm.conf' file"
 exit 0

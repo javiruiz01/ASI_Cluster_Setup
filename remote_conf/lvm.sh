@@ -29,8 +29,9 @@ do
     do
       # La lista de dispositivos se pasa tal cual al comando correspondiente
       # en lvm, lo que si que hay que comprobar es que los dispositivos existen
-      blkid | grep $i > /dev/null
-      #[[ $? -ne 0 ]] && exit 21
+      #blkid | grep $i > /dev/null
+      fdisk -l | grep $i > /dev/null
+      [[ $? -ne 0 ]] && exit 21
       echo -e "[\e[32mINFO\e[0m] Device $i is a block device, continuing"
     done
     # list=$line

@@ -9,7 +9,9 @@ do
   counterLine=$((counterLine+1))
 done < "backup_server.conf"
 
-[[ $counterLine -eq 0 ]] && exit 58
+[[ $counterLine -eq 0 ]] && exit 62
+
+echo -e "[\e[32mINFO\e[0m] Backup directory: $directory"
 
 which rsync > /dev/null
 if [[ $? -ne 0 ]] 

@@ -36,7 +36,7 @@ do
   # Ahora verificamos todo
   check_ip "${array[0]}"  # El resto de elementos corresponden al servidor NFS
                           # pensar en como probarlos
-  # Hay que comprobar que cada linea tiene 3 cosas
+  lineCounter=$((lineCounter+1))
 done < "nfs_client.conf"
 
 [[ $lineCounter -eq 0 ]] && exit 42

@@ -19,9 +19,9 @@ function check_ip {
 }
 
 # Formato del fichero de configuracion
-#   ruta-del-directorio-del-que-se-desea-hacer-backup
+#   ruta-del-directorio-del-que-se-desea-hacer-backup <-- LOCAL
 #   direccion-del-servidor-de-backup
-#   ruta-de-directorio-destino-del-backup
+#   ruta-de-directorio-destino-del-backup <-- REMOTO
 #   periodicidad-del-backup-en-horas
 lineCounter=0
 while read -r line
@@ -31,7 +31,7 @@ do
   then
     directory=$line
     [[ ! -d $directory ]] && exit 56
-    echo -e "[\e[32mINFO\e[0m] This is our working directory: $directory"
+    echo -e "[\e[32mINFO\e[0m] This is the server directory: $directory"
   elif [[ $lineCounter -eq 1 ]] 
   then 
     server=$line 
@@ -39,7 +39,8 @@ do
   elif [[ $lineCounter -eq 2 ]]
   then
     serverRoute=$line 
-    echo -e "[\e[32mINFO\e[0m] This is our server route: $serverRoute"
+    #[[ ! -d $serverRoute ]] && exit 56
+    echo -e "[\e[32mINFO\e[0m] This is our local route: $serverRoute"
   elif [[ $lineCounter -eq 3 ]]
   then
     # Tenemos que comprobar que la periodicidad es un numero
@@ -83,20 +84,22 @@ fi
 # "se podra asumir que un servidor de ssh esta presente en todas las maquinas y que el 
 #  usuario root puede conectarse de unas a otras sin tener que insertar contrasena"
 
-#echo 'rsync'" -a $directory root@$server:$serverRoute"
+echo 'rsync'" -a $directory root@$server:$serverRoute"
 rsync -a $directory root@$server:$serverRoute > /dev/null 2> /dev/null
-[[ $? -ne 0 ]] && exit 56
+[[ $? -ne 0 ]] && exit 59
 
 # Periodicidad del backup en horas
 rsyncRoute=`which rsync`
 touch $PWD/rsync.sh
-chmod +x $PWD/rsync.sh
+# chmod +x $PWD/rsync.sh somos root, no nos hacen falta permisos como tal
+
 if [[ -n "`cat $PWD/rsync.sh | grep "$rsyncRoute -a $directory root@$server:$serverRoute"`" ]] 
 then
   echo -e "[\e[32mINFO\e[0m] Already in $PWD/rsync.sh file"
 else
   echo "$rsyncRoute -a $directory root@$server:$serverRoute" >> $PWD/rsync.sh
 fi
+
 if [[ ! -n "`crontab -l | grep $PWD/rsync.sh`" ]]
 then
   (crontab -l 2>/dev/null; echo "* */$delorean * * * $PWD/rsync.sh") | crontab -

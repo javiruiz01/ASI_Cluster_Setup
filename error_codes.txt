@@ -21,12 +21,13 @@
 18 --> En servicio raid, el comando mdadm no se ha ejecutado correctamente
 19 --> En servicio raid, el nivel de raid no es correcto
 20 --> En servicio lvm, instalacion ha fallado
-21 --> En servicio raid, la unidad de uno de los tamanos es incorrecto (No es G, M, o K)
+21 --> En servicio lvm, dispositivo no existe
+# 21 --> En servicio raid, la unidad de uno de los tamanos es incorrecto (No es G, M, o K)
 22 --> En servicio lvm, tamano del grupo excede el del volumen fisico
 23 --> En servicio lvm, lineas no suficientes
 24 --> En servicio lvm, fallo en vgcreate
 25 --> En servicio lvm, fallo en lvcreate
-26 --> En servicio lvm, fallo en mkfs
+# 26 --> En servicio lvm, fallo en mkfs
 27 --> En servicio lvm, fallo en pvcreate
 28 --> En servicio nis_server, el fichero conf tiene demasiadas lineas
 29 --> En servicio nis_server, fallo en la instalacion del paquete nis
@@ -37,26 +38,31 @@
 34 --> En servicio nis_client, fallo en instalacion del paquete portmap
 35 --> En servicio nis_client, fallo en instalacion del paquete nis
 36 --> En servicio nfs_server, la ruta especificada en nfs_server.conf no existe
-37 --> En servicio nfs_server, la ruta especificada no tiene permisos necesarios
+#37 --> En servicio nfs_server, la ruta especificada no tiene permisos necesarios
 38 --> En servicio nfs_server, fallo en instalacion del paquete nfs-kernel-server
-39 --> En servicio nfs_server, numero de lineas incorrecto en nfs_server.conf
+39 --> En servicio nfs_server, el fichero nfs_server.conf esta vacio
 40 --> En servicio nfs_server, fallor al crear la tabla con los exports
 41 --> En servicio nfs_server, fallo al arrancar el servicio NFS
-42 --> En servicio nfs_client, numero de lineas insuficientes en nfs_client.conf
+42 --> En servicio nfs_client, fichero de configuracion nfs_client.conf esta vacio
 43 --> En servicio nfs_client, IP no valida, algun numero es mayor que 255
 44 --> En servicio nfs_client, IP no valida, algun numero es mayor que 255
 45 --> En servicio nfs_client, falta alguno de los elementos de la linea en nfs_client.conf
 46 --> En servicio nfs_client, fallo en instalacion del paquete nfs-common
 47 --> En servicio nfs_client, fallo al realizar el montaje con el servidor
-48 --> En servicio nfs_client, fallo en la segunda comprobacion del montaje
+48 --> En servicio nfs_client, el directorio especificado en el directorio conf no existe
 49 --> En servicio backup_server, directorio en fichero conf no existe
-50 --> En servicio backup_server, numero de lineas incorrecto en fichero configuracion
+50 --> En servicio backup_server, demasiadas lineas en fichero configuracion
 51 --> En servicio backup_client, numero de lineas incorrecto en fichero configuracion
 52 --> En servicio backup_client, IP no valida, algun numero es mayor de 255
 53 --> En servicio backup_client, IP no valida, no todo son numeros
-54 --> En servicio backup_server, instalacion de rsync ha fallado
+54 --> En servicio backup_client, numero de lineas incorrectas en el fichero de conf
 55 --> En servicio backup_client, instalacion de rsync ha fallado
-56 --> En servicio nis_server, el fichero de configuracion esta vacio
-57 --> en servicio nis_server, la instalacion de portmap ha fallado
-58 --> en servicio backup_server, fichero de configuracion estávacio
-59 --> En servicio nfs_client, no hay 3 elementos por linea
+#56 --> En servicio nis_server, el fichero de configuracion esta vacio
+56 --> En servicio backup_client, el directorio parace que no existe
+57 --> En servicio backup_client, periodicidad no parece que sea un numero
+58 --> En servicio backup_client, periodicidad es demasiado pequeno
+59 --> En servicio backup_client, el comando rsync ha fallado
+60 --> En servicio nis_server, el fichero de configuracion esta vacio
+61 --> En servicio nis_server, ha fallado la instalacion del portmap
+62 --> En servicio backup_server, el fichero de configuracion esta vacio
+63 --> En servicio raid, el fichero de configuracion esta vacio

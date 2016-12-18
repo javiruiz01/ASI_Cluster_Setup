@@ -9,7 +9,7 @@ do
   echo -e "[\e[32mINFO\e[0m] Domain name is: $domainName"
 done < "nis_server.conf"
 
-[[ $lineCounter -eq 0 ]] && exit 56
+[[ $lineCounter -eq 0 ]] && exit 60
 
 # Check for installation of the requiered packages
 which rpcbind > /dev/null
@@ -17,7 +17,7 @@ if [[ $? -ne 0 ]]
 then
   export DEBIAN_FRONTEND=noninteractive
   apt-get install portmap --no-install-recommends > /dev/null 2> /dev/null
-  [[ $? -ne 0 ]] && exit 57
+  [[ $? -ne 0 ]] && exit 61
   echo -e "[\e[32mINFO\e[0m] Command 'portmap' installed correctly"
 else
   echo -e "[\e[32mINFO\e[0m] Command 'portmap' is already installed, continuing"
