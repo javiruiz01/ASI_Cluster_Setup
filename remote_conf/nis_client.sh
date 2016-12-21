@@ -68,9 +68,7 @@ fi
 #echo "domain $domainName server $ip" >> /etc/yp.conf
 echo "ypserver $ip" >> /etc/yp.conf
 
-#Anadimos a /etc/hosts
-echo "$ip $domainName" >> /etc/hosts
-
+echo "$domainName" > /etc/defaultdomain
 # Despues de tutoria con latorre
 if [[ ! -n "`grep "nis" /etc/nsswitch.conf`" ]]
 then
@@ -82,20 +80,25 @@ fi
 # For security reasons
 echo "portmap : $ip" > /etc/hosts.allow
 
-echo "+::::::" > /etc/passwd
-echo "+:::" > /etc/group
-echo "+::::::::" > /etc/shadow
+if [[ -n "`grep "+::::::" /etc/passwd`" ]]
+then
+  echo "+::::::" > /etc/passwd
+fi
+if [[ -n "`grep "+::::::" /etc/group`" ]]
+then
+  echo "+:::" > /etc/group
+fi
+if [[ -n "`grep "+::::::" /etc/shadow`" ]]
+then
+  echo "+::::::::" > /etc/shadow
+fi
 # End tutorial
 
-# 
-domainname $domainName
-domainName > /etc/defaultdomain
-
-/usr/sbin/ypinit -m
+# /usr/sbin/ypinit -m
 
 echo -e "[\e[32mINFO\e[0m] Restarting yp service"
 #/usr/lib/netsvc/yp/ypstop
 #/usr/lib/netsvc/yp/ypstart
-/etc/init.d/nis restart
+service nis restart
 
 exit 0

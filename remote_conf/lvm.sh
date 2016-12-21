@@ -91,8 +91,8 @@ OIFS=$IFS
 IFS=":"
 set -- $line
 freeSpace=${16}
-freeSpace=$((freeSpace*4))
-[[ $freeSpace -lt $totalSize ]] && exit 60 #########
+freeSpace=$((freeSpace * 4))
+[[ $freeSpace -lt $totalSize ]] && exit 64 #########
 echo -e "[\e[32mINFO\e[0m] The total size seems to be something we can handle, continuing"
 IFS=$OIFS
 

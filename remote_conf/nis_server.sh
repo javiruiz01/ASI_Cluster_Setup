@@ -58,16 +58,16 @@ fi
 # Restart the portmap daemon
 #echo -e "[\e[32mINFO\e[0m] Restarting portmap"
 #/etc/init.d/portmap restart
-
+/etc/init.d/rpcbind restart
 # Restart the NIS daemon
 echo -e "[\e[32mINFO\e[0m] Restarting nis"
-/etc/init.d/nis restart
+#/etc/init.d/nis restart > /dev/null
 
 # We generate the NIS (YP) database
-/usr/lib/yp/ypinit -m 
-
+/usr/lib/yp/ypinit -m > /dev/null 
+/etc/init.d/nis restart
 echo -e "[\e[32mINFO\e[0m] Restarting NIS service: ypserv"
-service ypserv restart
+service ypserv restart > /dev/null
 
 # No seguimos avanzando, tecnicamente el servidor NIS ya esta creado
 
