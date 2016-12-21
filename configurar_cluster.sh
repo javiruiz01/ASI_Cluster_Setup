@@ -1,22 +1,22 @@
 #! /bin/bash
 
-# Funcione que imprime las salidas con la informacion o los errores 
+# Funcione que imprime las salidas con la informacion o los errores
 function print {
   red="\e[31m"
   green="\e[32m"
   end="\e[0m"
-  
+
   type=$1
   message=$2
-  # Se nos pide que todos los mensajes de informacion salgan por la 
+  # Se nos pide que todos los mensajes de informacion salgan por la
   # salida de error en el enunciado
   if [[ $type == "info" ]]
   then
     echo -e "[${green}INFO${end}] $message"
   elif [[ $type == "usage" ]]
-  then 
+  then
     echo -e "[${green}USAGE${end}] $message"
-  else 
+  else
     echo -e "[${red}ERROR${end}] in line $counterLine:  $3" 1>&2
     exit $2
   fi
@@ -38,7 +38,7 @@ function setUp {
   code=$?
   case $code in
     0)
-      # Todo a salido bien en a maquina remota, seguimos leyendo el fichero de 
+      # Todo a salido bien en a maquina remota, seguimos leyendo el fichero de
       # configuracion
       print "info" "Next step"
       cd /home/practicas/cluster_configuration/
@@ -49,10 +49,10 @@ function setUp {
       print "error" "$code" "From the remote machine, the conf file $3 has too many lines"
       ;;
     12)
-      # MOUNT 
+      # MOUNT
       counterLine=27
       print "error" "$code" "From the remote machine, mounting point does not seem to be empty"
-      ;; 
+      ;;
     13)
       # MOUNT
       counterLine=32
@@ -81,7 +81,7 @@ function setUp {
     18)
       # RAID
       counterLine=72
-      print "error" "$code" "From remote machine, command 'mdadm' failed"      
+      print "error" "$code" "From remote machine, command 'mdadm' failed"
       ;;
     19)
       # RAID
@@ -235,7 +235,7 @@ function setUp {
       counterLine=6
       print "error" "$code" "From remote machine, incorrect number of lines in conf file"
       ;;
-    51) 
+    51)
       # BACKUP_CLIENT
       counterLine=60
       print "error" "$code" "From remote machine, too many lines in conf file"
@@ -300,6 +300,10 @@ function setUp {
       counterLine=50
       print "error" "$code" "From remote machine, the configuration file $3 seems to be empty"
       ;;
+    64)
+      # LVM
+      print "error" "$code" "From remote machine, total size wanted is too big for the volume group size"
+      ;;
   esac
 }
 
@@ -317,7 +321,7 @@ function check_ip {
     OIFS=$IFS
     IFS="."
     set -- $ip
-    if [[ $1 -le 255 && $2 -le 255 && $3 -le 255 && $4 -le 255 ]] 
+    if [[ $1 -le 255 && $2 -le 255 && $3 -le 255 && $4 -le 255 ]]
     then
       print "info" "Valid ip: $ip"
     fi
@@ -373,11 +377,11 @@ function main {
     then
       print "error" "7" "Format not accepted in line $counterLine"
     fi
-    
+
     # Realizamos comprobacion sobre la ip
     check_ip "$ip"
 
-    # Realizamos comprobacion sobre el servico    
+    # Realizamos comprobacion sobre el servico
     # name=$name.sh
     if [[ ! -r remote_conf/$name.sh ]]
     then
@@ -390,7 +394,7 @@ function main {
       print "info" "Valid service: $service"
     fi
     check_execute "remote_conf/$name.sh"
-    setUp "$ip" "$name" "$service" 
+    setUp "$ip" "$name" "$service"
   done < $CONF
 }
 
