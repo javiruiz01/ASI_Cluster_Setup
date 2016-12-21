@@ -72,7 +72,7 @@ fi
 
 # We mark the physical volumes within LVM to indicate that they are ready
 # to be added to a volume group
-echo 'pvcreate '"${deviceList[@]}"
+# echo 'pvcreate '"${deviceList[@]}"
 pvcreate ${deviceList[@]}
 [[ $? -ne 0 ]] && exit 27
 

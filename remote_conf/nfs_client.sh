@@ -42,11 +42,11 @@ done < "nfs_client.conf"
 [[ $lineCounter -eq 0 ]] && exit 42
 
 lineCounter=$((lineCounter-1))
-echo -e "[\e[32mINFO\e[0m] Testing to see if array is working properly"
-for i in `seq 0 $lineCounter` 
-do
-  echo "[IP]: ${ip[$i]}, [REMOTE]: ${remote[$i]}, [MOUNT]: ${mount[$i]}"
-done
+#echo -e "[\e[32mINFO\e[0m] Testing to see if array is working properly"
+#for i in `seq 0 $lineCounter` 
+#do
+#  echo "[IP]: ${ip[$i]}, [REMOTE]: ${remote[$i]}, [MOUNT]: ${mount[$i]}"
+#done
 
 # Install necessary packages
 which nfs-common > /dev/null

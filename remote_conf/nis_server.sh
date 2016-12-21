@@ -40,6 +40,7 @@ nisdomainname $domainName
 
 # Guardamos el servidor en /etc/defaultdomain
 echo "$domainName" > /etc/defaultdomain
+echo "domain $domainName server 127.0.0.1" > /etc/yp.conf
 
 touch /etc/sysconfig/network
 echo "NISDOMAIN=$domainName" >> /etc/sysconfig/network
@@ -59,8 +60,8 @@ fi
 #/etc/init.d/portmap restart
 
 # Restart the NIS daemon
-#echo -e "[\e[32mINFO\e[0m] Restarting nis"
-#/etc/init.d/nis restart
+echo -e "[\e[32mINFO\e[0m] Restarting nis"
+/etc/init.d/nis restart
 
 # We generate the NIS (YP) database
 /usr/lib/yp/ypinit -m 

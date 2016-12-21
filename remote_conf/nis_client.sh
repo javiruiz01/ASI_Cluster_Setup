@@ -5,6 +5,7 @@
 #   servicio-nis-al-que-se-desea-conectar (IP)
 
 function check_ip {
+  ip=$1
   if [[ $ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]
   then
     OIFS=$IFS
@@ -61,22 +62,40 @@ then
 else
   echo -e "[\e[32mINFO\e[0m] Command is already installed, continuing"
 fi
-
+/usr/sbin/ypbind start
 # Mirar comprobaciones fancies para poner aqui
 # porque a lo mejor puede que ya exista
-echo "domain $domainName server $ip" >> /etc/yp.conf
+#echo "domain $domainName server $ip" >> /etc/yp.conf
+echo "ypserver $ip" >> /etc/yp.conf
+
+#Anadimos a /etc/hosts
+echo "$ip $domainName" >> /etc/hosts
+
+# Despues de tutoria con latorre
+if [[ ! -n "`grep "nis" /etc/nsswitch.conf`" ]]
+then
+  sed -i 's/passwd:         compat/passwd:         nis compat/g' /etc/nsswitch.conf
+  sed -i 's/group:          compat/group:          nis compat/g' /etc/nsswitch.conf
+  sed -i 's/shadow:         compat/shadow:         nis compat/g' /etc/nsswitch.conf
+fi
+
+# For security reasons
+echo "portmap : $ip" > /etc/hosts.allow
+
+echo "+::::::" > /etc/passwd
+echo "+:::" > /etc/group
+echo "+::::::::" > /etc/shadow
+# End tutorial
 
 # 
 domainname $domainName
 domainName > /etc/defaultdomain
 
-/usr/sbin/ypinit -c
+/usr/sbin/ypinit -m
 
 echo -e "[\e[32mINFO\e[0m] Restarting yp service"
-/usr/lib/netsvc/yp/ypstop
-/usr/lib/netsvc/yp/ypstart
-
-
-
+#/usr/lib/netsvc/yp/ypstop
+#/usr/lib/netsvc/yp/ypstart
+/etc/init.d/nis restart
 
 exit 0

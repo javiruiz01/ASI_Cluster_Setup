@@ -27,7 +27,7 @@ lineCounter=0
 while read -r line
 do
   # Este es nuestro directorio del que queremos hacer backup
-  if [[ $lineCounter -eq 0 ]] 
+  if [[ $lineCounter -eq 2 ]] 
   then
     directory=$line
     [[ ! -d $directory ]] && exit 56
@@ -36,7 +36,7 @@ do
   then 
     server=$line 
     check_ip "$server"
-  elif [[ $lineCounter -eq 2 ]]
+  elif [[ $lineCounter -eq 0 ]]
   then
     serverRoute=$line 
     #[[ ! -d $serverRoute ]] && exit 56
@@ -45,7 +45,7 @@ do
   then
     # Tenemos que comprobar que la periodicidad es un numero
     delorean=$line 
-    if [[ $delorean == ?(-)+([0-9]) ]]
+    if [[ $delorean -lt 24 ]]
     then
       if [[ $delorean -gt 0 ]]
       then
@@ -90,7 +90,11 @@ rsync -a $directory root@$server:$serverRoute > /dev/null 2> /dev/null
 
 # Periodicidad del backup en horas
 rsyncRoute=`which rsync`
-touch $PWD/rsync.sh
+if [[ ! -e $PWD/rsync.sh ]] 
+then
+  touch $PWD/rsync.sh
+  echo '#! /bin/bash' >> $PWD/rsync.sh
+fi
 # chmod +x $PWD/rsync.sh somos root, no nos hacen falta permisos como tal
 
 if [[ -n "`cat $PWD/rsync.sh | grep "$rsyncRoute -a $directory root@$server:$serverRoute"`" ]] 

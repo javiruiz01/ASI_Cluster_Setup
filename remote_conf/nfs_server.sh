@@ -17,10 +17,10 @@ done < "nfs_server.conf"
 [[ $lineCounter -eq 0 ]] && exit 39 # Ver bien el numero de exit
 
 # Comprobamos que el array tiene lo que queremos
-for i in ${directories[@]}
-do
-  echo "[DIRECTORY]: $i"
-done
+#for i in ${directories[@]}
+#do
+#  echo "[DIRECTORY]: $i"
+#done
 
 # We need to install nfs-kernel-server
 `nfs-kernel-server status`  > /dev/null
